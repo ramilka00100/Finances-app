@@ -1,5 +1,5 @@
 // ⚠️ МЕНЯЙ VERSION КАЖДЫЙ РАЗ при обновлении сайта
-const VERSION = 'v1.9.0';
+const VERSION = 'v1.9.1';
 const CACHE_NAME = 'finance-' + VERSION;
 const ASSETS = [
   './',
