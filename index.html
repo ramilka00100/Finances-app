@@ -108,9 +108,15 @@ button.secondary:active { transform: scale(.975); background: var(--line); }
 .cat-total-val { font-weight: 800; font-size: 16px; color: var(--ink); font-variant-numeric: tabular-nums; }
 .swipe-wrap { position: relative; overflow: hidden; background: var(--card); border-bottom: 1px solid var(--line); }
 .swipe-wrap:last-child { border-bottom: none; }
-.swipe-bg-edit, .swipe-bg-delete { position: absolute; inset: 0; display: none; align-items: center; color: #fff; font-weight: 800; font-size: 15px; z-index: 1; }
+
+/* === ПАТЧ 1: cursor:pointer и :active для фонов свайпа === */
+.swipe-bg-edit, .swipe-bg-delete { position: absolute; inset: 0; display: none; align-items: center; color: #fff; font-weight: 800; font-size: 15px; z-index: 1; cursor: pointer; }
 .swipe-bg-edit { background: #10b981; padding-left: 24px; justify-content: flex-start; gap: 8px; }
 .swipe-bg-delete { background: #e11d48; padding-right: 24px; justify-content: flex-end; gap: 8px; }
+.swipe-bg-edit:active { filter: brightness(0.9); }
+.swipe-bg-delete:active { filter: brightness(0.9); }
+/* ======================================================== */
+
 .bg-text { opacity: 0; transition: opacity 0.1s; white-space: nowrap; } .bg-emoji { font-size: 20px; }
 .list-item { position: relative; z-index: 2; background: var(--card); display: flex; align-items: center; gap: 12px; padding: 11px 0; transform: translateX(0); transition: transform 0.2s ease, background-color 0.3s; touch-action: pan-y; }
 .list-item:first-child { padding-top: 4px; }
@@ -207,40 +213,10 @@ input:checked + .theme-slider:before { transform: translateX(22px); }
 .toast { position: fixed; left: 50%; bottom: calc(86px + env(safe-area-inset-bottom)); transform: translate(-50%, 16px); background: var(--ink); color: var(--card); font-size: 13.5px; font-weight: 700; padding: 13px 22px; border-radius: 15px; opacity: 0; pointer-events: none; transition: opacity .25s, transform .25s cubic-bezier(.32,.72,0,1); z-index: 200; box-shadow: 0 16px 34px -12px rgba(16,21,43,.65); max-width: calc(100% - 40px); width: calc(100% - 32px); display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .toast.show { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
 .toast button { background: #fbbf24; color: #000; border: none; padding: 4px 10px; border-radius: 8px; font-weight: 800; font-size: 13px; cursor: pointer; width: auto; margin: 0; }
-
-/* Установка */
 #installAppBtn { display: none; background: linear-gradient(135deg, #10b981, #059669); color: #fff; box-shadow: 0 8px 20px -8px rgba(16,185,129,.8); margin-bottom: 12px; }
-
-/* Баннер обновления */
-#updateBanner {
-  display: none;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  background: linear-gradient(135deg, #10b981, #059669);
-  color: #fff;
-  font-weight: 700;
-  font-size: 14px;
-  padding: 14px 16px;
-  border-radius: 16px;
-  margin-bottom: 12px;
-  box-shadow: 0 8px 20px -8px rgba(16,185,129,.6);
-  animation: updateSlide .35s cubic-bezier(.32,.72,0,1);
-}
+#updateBanner { display: none; align-items: center; justify-content: space-between; gap: 12px; background: linear-gradient(135deg, #10b981, #059669); color: #fff; font-weight: 700; font-size: 14px; padding: 14px 16px; border-radius: 16px; margin-bottom: 12px; box-shadow: 0 8px 20px -8px rgba(16,185,129,.6); animation: updateSlide .35s cubic-bezier(.32,.72,0,1); }
 #updateBanner.show { display: flex; }
-#updateBanner button {
-  background: #fff;
-  color: #059669;
-  border: none;
-  border-radius: 10px;
-  padding: 8px 14px;
-  font-weight: 800;
-  font-size: 13px;
-  cursor: pointer;
-  width: auto;
-  flex-shrink: 0;
-  box-shadow: 0 2px 6px rgba(0,0,0,.1);
-}
+#updateBanner button { background: #fff; color: #059669; border: none; border-radius: 10px; padding: 8px 14px; font-weight: 800; font-size: 13px; cursor: pointer; width: auto; flex-shrink: 0; box-shadow: 0 2px 6px rgba(0,0,0,.1); }
 @keyframes updateSlide { from { opacity: 0; transform: translateY(-10px); } }
 </style>
 </head>
@@ -361,7 +337,7 @@ input:checked + .theme-slider:before { transform: translateX(22px); }
         </button>
         <button class="menu-row danger" onclick="clearAllData()"><span class="menu-ic">🗑️</span><span class="menu-label">Очистить все записи</span><span class="menu-arrow">›</span></button>
       </div>
-      <div class="about">Мои финансы · v1.9.0<br>Все данные остаются только у вас</div>
+      <div class="about">Мои финансы · v1.9.1<br>Все данные остаются только у вас</div>
     </div>
   </section>
 </main>
@@ -376,7 +352,6 @@ input:checked + .theme-slider:before { transform: translateX(22px); }
   <button class="nav-item" data-tab="profile" onclick="switchTab('profile')"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.8"/><path d="M4.8 20c1.3-3.8 3.8-5.6 7.2-5.6s5.9 1.8 7.2 5.6"/></svg><span>Профиль</span></button>
 </nav>
 
-<!-- МОДАЛКИ -->
 <div class="modal-bg" id="txModal"><div class="modal"><div class="modal-handle"></div><h2 id="txModalTitle">Новая запись</h2><div class="add-form">
   <div class="type-switch" id="typeSwitch"><div class="type-thumb"></div><button class="active" id="btnTypeExp" onclick="setType('expense')">− Расход</button><button id="btnTypeInc" onclick="setType('income')">+ Приход</button></div>
   <div class="row"><input type="number" id="amount" placeholder="0 ₽" inputmode="decimal" min="0" step="0.01"><select id="category"></select></div>
@@ -559,12 +534,28 @@ document.addEventListener('DOMContentLoaded', () => {
     window.renderStats();
   };
 
+  // === ПАТЧ 2: onclick на фонах свайпа ===
   function renderListItem(e) {
     const isGoalTx = e.category === 'goal_cat';
     const cat = isGoalTx ? { emoji: '🎯', name: 'Цель' } : (window.categories[e.category] || { emoji: '📦', name: 'Другое' });
     const isInc = e.type === 'income';
-    return `<div class="swipe-wrap"><div class="swipe-bg-edit"><span class="bg-emoji">✏️</span><span class="bg-text">Изменить</span></div><div class="swipe-bg-delete"><span class="bg-text">Удалить</span><span class="bg-emoji">🗑️</span></div><div class="list-item swipeable" data-id="${e.id}" data-goal="${isGoalTx}" data-translate="0"><div class="item-icon ${isInc ? 'inc' : 'exp'}">${cat.emoji}</div><div class="item-info"><div class="item-title">${window.escapeHtml(e.title)}</div><div class="item-date">${window.escapeHtml(cat.name)} · ${window.formatDate(e.date)}</div></div><div class="item-amount ${isInc ? 'inc' : 'exp'}">${isInc ? '+' : '−'}${fmt(e.amount)} ₽</div></div></div>`;
+    return `<div class="swipe-wrap">
+      <div class="swipe-bg-edit" onclick="handleEditTap(event, ${e.id}, ${isGoalTx})">
+        <span class="bg-emoji">✏️</span>
+        <span class="bg-text">Изменить</span>
+      </div>
+      <div class="swipe-bg-delete" onclick="handleDeleteTap(event, ${e.id})">
+        <span class="bg-text">Удалить</span>
+        <span class="bg-emoji">🗑️</span>
+      </div>
+      <div class="list-item swipeable" data-id="${e.id}" data-goal="${isGoalTx}" data-translate="0">
+        <div class="item-icon ${isInc ? 'inc' : 'exp'}">${cat.emoji}</div>
+        <div class="item-info"><div class="item-title">${window.escapeHtml(e.title)}</div><div class="item-date">${window.escapeHtml(cat.name)} · ${window.formatDate(e.date)}</div></div>
+        <div class="item-amount ${isInc ? 'inc' : 'exp'}">${isInc ? '+' : '−'}${fmt(e.amount)} ₽</div>
+      </div>
+    </div>`;
   }
+  // ====================================
 
   let touchStartX = 0, touchStartY = 0;
   document.addEventListener('touchstart', e => {
@@ -585,14 +576,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let openItem = null;
   let swipeStartX = 0, swipeStartY = 0, swipeCurrentItem = null, currentTranslate = 0;
+
+  // === ПАТЧ 4: игнорируем тапы по фонам свайпа ===
   document.addEventListener('touchstart', e => {
-    if (openItem && !e.target.closest('.swipeable')) {
+    if (openItem && !e.target.closest('.swipeable') && !e.target.closest('.swipe-bg-delete') && !e.target.closest('.swipe-bg-edit')) {
       openItem.style.transform = 'translateX(0)';
       openItem.dataset.translate = '0';
       openItem.parentNode.querySelectorAll('.bg-text').forEach(el => el.style.opacity = 0);
       openItem = null;
     }
   }, { passive: true });
+  // ============================================
 
   function setupSwipe(containerId) {
     const container = $(containerId);
@@ -665,6 +659,41 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
   setupSwipe('list'); setupSwipe('statsHistoryList');
+
+  // === ПАТЧ 3: функции тапа по корзине и карандашу ===
+  window.handleDeleteTap = function (event, id) {
+    event.stopPropagation();
+    const wrap = event.currentTarget.closest('.swipe-wrap');
+    if (!wrap) return;
+    const listItem = wrap.querySelector('.swipeable');
+    if (!listItem || openItem !== listItem) return;
+    const idx = window.transactions.findIndex(t => t.id === id);
+    if (idx === -1) return;
+    listItem.style.transform = 'translateX(0)';
+    listItem.dataset.translate = '0';
+    openItem = null;
+    wrap.querySelectorAll('.bg-text').forEach(el => el.style.opacity = 0);
+    tempDeletedItem = window.transactions[idx];
+    window.transactions.splice(idx, 1);
+    window.save();
+    window.render();
+    window.toast(`Удалено <button onclick="window.undoDelete()">Отменить</button>`);
+  };
+
+  window.handleEditTap = function (event, id, isGoal) {
+    event.stopPropagation();
+    const wrap = event.currentTarget.closest('.swipe-wrap');
+    if (!wrap) return;
+    const listItem = wrap.querySelector('.swipeable');
+    if (!listItem || openItem !== listItem) return;
+    listItem.style.transform = 'translateX(0)';
+    listItem.dataset.translate = '0';
+    openItem = null;
+    wrap.querySelectorAll('.bg-text').forEach(el => el.style.opacity = 0);
+    if (isGoal) { window.toast('Цель нельзя редактировать'); return; }
+    window.openTxModal(id);
+  };
+  // =====================================================
 
   window.undoDelete = function() {
     if (tempDeletedItem) { window.transactions.unshift(tempDeletedItem); window.save(); window.render(); tempDeletedItem = null; window.toast('Восстановлено'); }
@@ -1077,7 +1106,7 @@ document.addEventListener('DOMContentLoaded', () => {
   };
   window.copyAIReport = () => { $('aiReportTextarea').select(); document.execCommand('copy'); window.toast('Скопировано!'); };
 
-  /* ================= PWA: УСТАНОВКА + ОБНОВЛЕНИЯ ================= */
+  /* ================= PWA ================= */
   let deferredPrompt = null;
   let newWorker = null;
   let swRegistration = null;
@@ -1086,24 +1115,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const isStandalone = () => window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
   const isIOS = () => /iPad|iPhone|iPod/.test(navigator.userAgent);
 
-  function showInstallButton() {
-    const btn = $('installAppBtn');
-    if (btn && !isStandalone()) btn.style.display = 'block';
-  }
-  function hideInstallButton() {
-    const btn = $('installAppBtn');
-    if (btn) btn.style.display = 'none';
-  }
+  function showInstallButton() { const btn = $('installAppBtn'); if (btn && !isStandalone()) btn.style.display = 'block'; }
+  function hideInstallButton() { const btn = $('installAppBtn'); if (btn) btn.style.display = 'none'; }
 
-  window.addEventListener('beforeinstallprompt', e => {
-    e.preventDefault();
-    deferredPrompt = e;
-    showInstallButton();
-  });
-  window.addEventListener('appinstalled', () => {
-    hideInstallButton();
-    window.toast('Приложение установлено!');
-  });
+  window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferredPrompt = e; showInstallButton(); });
+  window.addEventListener('appinstalled', () => { hideInstallButton(); window.toast('Приложение установлено!'); });
 
   window.installPWA = async function () {
     if (isStandalone()) return;
@@ -1121,16 +1137,13 @@ document.addEventListener('DOMContentLoaded', () => {
   async function initServiceWorker() {
     if (!('serviceWorker' in navigator)) return;
     if (location.protocol === 'file:') { showInstallButton(); return; }
-
     try {
       swRegistration = await navigator.serviceWorker.register('./sw.js');
       swRegistration.update().catch(() => {});
-
       if (swRegistration.waiting && navigator.serviceWorker.controller) {
         newWorker = swRegistration.waiting;
         $('updateBanner').classList.add('show');
       }
-
       swRegistration.addEventListener('updatefound', () => {
         const installing = swRegistration.installing;
         if (!installing) return;
@@ -1141,10 +1154,7 @@ document.addEventListener('DOMContentLoaded', () => {
           }
         });
       });
-    } catch (e) {
-      console.warn('[SW] registration failed:', e);
-      showInstallButton();
-    }
+    } catch (e) { console.warn('[SW] failed:', e); showInstallButton(); }
   }
 
   if ('serviceWorker' in navigator) {
@@ -1163,29 +1173,17 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   window.forceRefresh = function () {
-    window.askConfirm(
-      'Очистить кэш и обновиться?',
-      'Приложение скачает свежие файлы с сервера. Ваши записи, категории, цели и настройки НЕ пострадают.',
-      'Очистить и обновить',
-      async () => {
-        try {
-          if ('caches' in window) {
-            const keys = await caches.keys();
-            await Promise.all(keys.map(k => caches.delete(k)));
-          }
-          if ('serviceWorker' in navigator) {
-            const regs = await navigator.serviceWorker.getRegistrations();
-            await Promise.all(regs.map(r => r.unregister()));
-          }
-        } catch (e) { console.warn(e); }
-        window.location.reload();
-      }
-    );
+    window.askConfirm('Очистить кэш и обновиться?', 'Приложение скачает свежие файлы с сервера. Ваши записи НЕ пострадают.', 'Очистить и обновить', async () => {
+      try {
+        if ('caches' in window) { const keys = await caches.keys(); await Promise.all(keys.map(k => caches.delete(k))); }
+        if ('serviceWorker' in navigator) { const regs = await navigator.serviceWorker.getRegistrations(); await Promise.all(regs.map(r => r.unregister())); }
+      } catch (e) { console.warn(e); }
+      window.location.reload();
+    });
   };
 
   initServiceWorker();
   if (!isStandalone()) showInstallButton();
-  /* ============================================================== */
 
   if ('Notification' in window && Notification.permission === 'default') setTimeout(() => Notification.requestPermission(), 5000);
 
