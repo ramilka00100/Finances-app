@@ -1,22 +1,24 @@
-// Обертка для безопасной инициализации после загрузки HTML
 document.addEventListener('DOMContentLoaded', () => {
-
   const DEFAULT_CATS = {
-    food:      { emoji: '🍔', name: 'Еда', type: 'expense', budget: null },
-    transport: { emoji: '🚕', name: 'Транспорт', type: 'expense', budget: null },
-    home:      { emoji: '🏠', name: 'Дом', type: 'expense', budget: null },
-    health:    { emoji: '💊', name: 'Здоровье', type: 'expense', budget: null },
-    fun:       { emoji: '🎉', name: 'Развлечения', type: 'expense', budget: null },
-    shop:      { emoji: '🛍️', name: 'Покупки', type: 'expense', budget: null },
-    other:     { emoji: '📦', name: 'Другое', type: 'expense', budget: null },
-    salary:    { emoji: '💼', name: 'Зарплата', type: 'income', budget: null },
-    gift:      { emoji: '🎁', name: 'Подарок', type: 'income', budget: null },
-    cashback:  { emoji: '💸', name: 'Кэшбэк', type: 'income', budget: null },
-    other_inc: { emoji: '💰', name: 'Другое', type: 'income', budget: null }
+    food:      { emoji: '🍔', name: 'Еда', type: 'expense', budget: null, keywords: [] },
+    transport: { emoji: '🚕', name: 'Транспорт', type: 'expense', budget: null, keywords: [] },
+    home:      { emoji: '🏠', name: 'Дом', type: 'expense', budget: null, keywords: [] },
+    health:    { emoji: '💊', name: 'Здоровье', type: 'expense', budget: null, keywords: [] },
+    fun:       { emoji: '🎉', name: 'Развлечения', type: 'expense', budget: null, keywords: [] },
+    shop:      { emoji: '🛍️', name: 'Покупки', type: 'expense', budget: null, keywords: [] },
+    other:     { emoji: '📦', name: 'Другое', type: 'expense', budget: null, keywords: [] },
+    salary:    { emoji: '💼', name: 'Зарплата', type: 'income', budget: null, keywords: [] },
+    gift:      { emoji: '🎁', name: 'Подарок', type: 'income', budget: null, keywords: [] },
+    cashback:  { emoji: '💸', name: 'Кэшбэк', type: 'income', budget: null, keywords: [] },
+    other_inc: { emoji: '💰', name: 'Другое', type: 'income', budget: null, keywords: [] }
   };
 
-  // Делаем переменные глобальными через window
   window.categories    = JSON.parse(localStorage.getItem('categories')    || 'null') || { ...DEFAULT_CATS };
+  
+  for (let id in window.categories) {
+    if (!window.categories[id].keywords) window.categories[id].keywords = [];
+  }
+
   window.transactions  = JSON.parse(localStorage.getItem('transactions')  || '[]');
   window.hiddenFilters = JSON.parse(localStorage.getItem('hiddenFilters') || '[]');
   window.fixedExpenses = JSON.parse(localStorage.getItem('fixedExpenses') || '[]');
@@ -39,6 +41,9 @@ document.addEventListener('DOMContentLoaded', () => {
   window.confirmAction = null;
   window.statsPeriod = 'all';
   window.statsKind   = 'expense';
+  window.statsCategoryFilter = null; // Для вкладки Статистика
+  let forcedByPlus   = false;
+  let tempDeletedItem = null;
 
   const EMOJI_CHOICES = ['🍔','🚕','🏠','💊','🎉','🛍️','📦','☕','🍕','🍺','✈️','🎮','📚','🐾','👶','💻','🎵','🚗','⛽','💡','🧾','🎁','💅','🏋️','🚬','💍','🏦','📱','🎬','🌮','💼','💸','💰','💵','🏆','🤑','🎯'];
 
@@ -56,6 +61,36 @@ document.addEventListener('DOMContentLoaded', () => {
   const $ = id => document.getElementById(id);
   const fmt = n => n.toLocaleString('ru-RU', { maximumFractionDigits: 2 });
 
+  // ================= ТЁМНАЯ ТЕМА =================
+  function initTheme() {
+    const savedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    
+    if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      $('themeToggle').checked = true;
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0f111a');
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+      $('themeToggle').checked = false;
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#4f46e5');
+    }
+  }
+
+  window.toggleTheme = function() {
+    const isDark = $('themeToggle').checked;
+    if (isDark) {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      localStorage.setItem('theme', 'dark');
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0f111a');
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+      localStorage.setItem('theme', 'light');
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#4f46e5');
+    }
+  };
+  // ===============================================
+
   window.save = function() {
     localStorage.setItem('categories',    JSON.stringify(window.categories));
     localStorage.setItem('transactions',  JSON.stringify(window.transactions));
@@ -67,7 +102,14 @@ document.addEventListener('DOMContentLoaded', () => {
   window.escapeHtml = function(s) { if (!s) return ''; const d = document.createElement('div'); d.textContent = s; return d.innerHTML; };
   
   let toastTimer;
-  window.toast = function(msg) { const el = $('toast'); el.textContent = msg; el.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove('show'), 2200); };
+  window.toast = function(msg) { 
+    const el = $('toast'); 
+    el.innerHTML = msg; 
+    el.classList.add('show'); 
+    clearTimeout(toastTimer); 
+    toastTimer = setTimeout(() => el.classList.remove('show'), 3000); 
+  };
+  
   window.closeModal = function(id) { $(id).classList.remove('show'); };
   window.askConfirm = function(title, text, okLabel, action) { $('confirmTitle').textContent = title; $('confirmText').textContent = text; $('confirmOk').textContent = okLabel; window.confirmAction = action; $('confirmModal').classList.add('show'); };
 
@@ -80,14 +122,62 @@ document.addEventListener('DOMContentLoaded', () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  // ================= ПЕРЕКЛЮЧЕНИЕ ВИДА СТАТИСТИКИ =================
+  window.openCategoryStatsView = function(catId) {
+    window.statsCategoryFilter = catId;
+    const cat = catId === 'goal_cat' ? { emoji: '🎯', name: 'Цели' } : window.categories[catId];
+    
+    $('statsCategoryName').textContent = `${cat.emoji} ${cat.name}`;
+    $('statsCategoriesView').style.display = 'none';
+    $('statsHistoryHeader').style.display = 'block';
+    $('statsHistoryView').style.display = 'block';
+    $('kindSeg').style.display = 'none'; 
+    
+    window.renderStats();
+  };
+
+  window.closeStatsCategoryView = function() {
+    window.statsCategoryFilter = null;
+    $('statsCategoriesView').style.display = 'block';
+    $('statsHistoryHeader').style.display = 'none';
+    $('statsHistoryView').style.display = 'none';
+    $('kindSeg').style.display = 'grid';
+    
+    window.renderStats();
+  };
+
+  // Выносим рендер айтема в отдельную функцию для переиспользования
+  function renderListItem(e) {
+    const isGoalTx = e.category === 'goal_cat';
+    const cat = isGoalTx ? { emoji: '🎯', name: 'Цель' } : (window.categories[e.category] || { emoji: '📦', name: 'Другое' });
+    const isInc = e.type === 'income';
+    
+    return `
+      <div class="swipe-wrap">
+        <div class="swipe-bg-edit">
+          <span class="bg-emoji">✏️</span>
+          <span class="bg-text">Изменить</span>
+        </div>
+        <div class="swipe-bg-delete">
+          <span class="bg-text">Удалить</span>
+          <span class="bg-emoji">🗑️</span>
+        </div>
+        <div class="list-item swipeable" data-id="${e.id}" data-goal="${isGoalTx}" data-translate="0">
+          <div class="item-icon ${isInc ? 'inc' : 'exp'}">${cat.emoji}</div>
+          <div class="item-info"><div class="item-title">${window.escapeHtml(e.title)}</div><div class="item-date">${window.escapeHtml(cat.name)} · ${window.formatDate(e.date)}</div></div>
+          <div class="item-amount ${isInc ? 'inc' : 'exp'}">${isInc ? '+' : '−'}${fmt(e.amount)} ₽</div>
+        </div>
+      </div>`;
+  }
+
   let touchStartX = 0, touchStartY = 0;
   document.addEventListener('touchstart', e => {
-    if (e.target.closest('.modal-bg, .filters, .custom-date-row, input, select, textarea, .goals-scroll')) return;
+    if (e.target.closest('.modal-bg, .filters, .custom-date-row, input, select, textarea, .goals-scroll, .swipeable')) return;
     touchStartX = e.changedTouches[0].screenX; touchStartY = e.changedTouches[0].screenY;
   }, { passive: true });
   
   document.addEventListener('touchend', e => {
-    if (e.target.closest('.modal-bg, .filters, .custom-date-row, input, select, textarea, .goals-scroll')) return;
+    if (e.target.closest('.modal-bg, .filters, .custom-date-row, input, select, textarea, .goals-scroll, .swipeable')) return;
     const diffX = e.changedTouches[0].screenX - touchStartX;
     const diffY = e.changedTouches[0].screenY - touchStartY;
     if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 60) {
@@ -98,8 +188,168 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }, { passive: true });
 
+  // ================= ЛОГИКА СВАЙПОВ СПИСКА =================
+  let openItem = null;
+  let swipeStartX = 0, swipeStartY = 0, swipeCurrentItem = null, currentTranslate = 0;
+
+  document.addEventListener('touchstart', e => {
+    if (openItem && !e.target.closest('.swipeable')) {
+      openItem.style.transform = 'translateX(0)';
+      openItem.dataset.translate = '0';
+      openItem.parentNode.querySelectorAll('.bg-text').forEach(el => el.style.opacity = 0);
+      openItem = null;
+    }
+  }, { passive: true });
+
+  // Универсальная настройка свайпов для контейнера
+  function setupSwipe(containerId) {
+    const container = $(containerId);
+    if (!container) return;
+
+    container.addEventListener('touchstart', e => {
+      const item = e.target.closest('.swipeable');
+      if (!item) return;
+
+      if (openItem && openItem !== item) {
+        openItem.style.transform = 'translateX(0)';
+        openItem.dataset.translate = '0';
+        openItem.parentNode.querySelectorAll('.bg-text').forEach(el => el.style.opacity = 0);
+        openItem = null;
+      }
+
+      swipeStartX = e.touches[0].clientX;
+      swipeStartY = e.touches[0].clientY;
+      swipeCurrentItem = item;
+      currentTranslate = parseFloat(item.dataset.translate || 0);
+    }, { passive: true });
+
+    container.addEventListener('touchmove', e => {
+      if (!swipeCurrentItem) return;
+      const deltaX = e.touches[0].clientX - swipeStartX;
+      const deltaY = e.touches[0].clientY - swipeStartY;
+
+      if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 10) {
+        swipeCurrentItem.style.transition = 'none';
+        
+        const bgEdit = swipeCurrentItem.parentNode.querySelector('.swipe-bg-edit');
+        const bgDelete = swipeCurrentItem.parentNode.querySelector('.swipe-bg-delete');
+        const txtEdit = bgEdit.querySelector('.bg-text');
+        const txtDelete = bgDelete.querySelector('.bg-text');
+
+        const isOpened = (openItem === swipeCurrentItem);
+        let newTranslate = currentTranslate + deltaX;
+
+        if (!isOpened) {
+          if (newTranslate < -80) newTranslate = -80;
+          if (newTranslate > 80) newTranslate = 80;
+        } else {
+          if (newTranslate < -140) newTranslate = -140;
+          if (newTranslate > 140) newTranslate = 140;
+        }
+
+        swipeCurrentItem.style.transform = `translateX(${newTranslate}px)`;
+        swipeCurrentItem.dataset.translate = newTranslate;
+
+        if (newTranslate > 0) {
+          bgEdit.style.display = 'flex';
+          bgDelete.style.display = 'none';
+        } else if (newTranslate < 0) {
+          bgEdit.style.display = 'none';
+          bgDelete.style.display = 'flex';
+        }
+
+        let absT = Math.abs(newTranslate);
+        let opacity = 0;
+        if (isOpened && absT > 80) {
+          opacity = Math.min(1, (absT - 80) / 40);
+        }
+        
+        if (newTranslate > 0) txtEdit.style.opacity = opacity;
+        else if (newTranslate < 0) txtDelete.style.opacity = opacity;
+
+        if (e.cancelable) e.preventDefault();
+      }
+    }, { passive: false });
+
+    container.addEventListener('touchend', e => {
+      if (!swipeCurrentItem) return;
+      swipeCurrentItem.style.transition = 'transform 0.2s ease';
+      
+      const finalTranslate = parseFloat(swipeCurrentItem.dataset.translate || 0);
+      const id = parseInt(swipeCurrentItem.dataset.id);
+      const isGoal = swipeCurrentItem.dataset.goal === 'true';
+      const isOpened = (openItem === swipeCurrentItem);
+      
+      swipeCurrentItem.dataset.translate = 0;
+      swipeCurrentItem.parentNode.querySelectorAll('.bg-text').forEach(el => el.style.opacity = 0);
+
+      if (isOpened) {
+        if (finalTranslate <= -100) {
+          swipeCurrentItem.style.transform = 'translateX(0)';
+          openItem = null;
+          
+          const idx = window.transactions.findIndex(t => t.id === id);
+          tempDeletedItem = window.transactions[idx];
+          window.transactions.splice(idx, 1);
+          
+          window.save();
+          window.render(); // Обновляем всё (включая статистику)
+          
+          window.toast(`Удалено <button onclick="window.undoDelete()">Отменить</button>`);
+        } else if (finalTranslate >= 100) {
+          swipeCurrentItem.style.transform = 'translateX(0)';
+          openItem = null;
+          if (!isGoal) window.openTxModal(id);
+          else window.toast('Цель нельзя редактировать');
+        } else {
+          if (finalTranslate > -40 && finalTranslate < 40) {
+            swipeCurrentItem.style.transform = 'translateX(0)';
+            openItem = null;
+          } else {
+            const snapPos = finalTranslate < 0 ? -80 : 80;
+            swipeCurrentItem.style.transform = `translateX(${snapPos}px)`;
+            swipeCurrentItem.dataset.translate = snapPos;
+          }
+        }
+      } else {
+        if (finalTranslate <= -40) {
+          swipeCurrentItem.style.transform = 'translateX(-80px)';
+          swipeCurrentItem.dataset.translate = -80;
+          openItem = swipeCurrentItem;
+        } else if (finalTranslate >= 40) {
+          swipeCurrentItem.style.transform = 'translateX(80px)';
+          swipeCurrentItem.dataset.translate = 80;
+          openItem = swipeCurrentItem;
+        } else {
+          swipeCurrentItem.style.transform = 'translateX(0)';
+          openItem = null;
+        }
+      }
+      
+      swipeCurrentItem = null;
+    });
+  }
+
+  // Включаем свайпы для главной и для статистики
+  setupSwipe('list');
+  setupSwipe('statsHistoryList');
+
+  window.undoDelete = function() {
+    if (tempDeletedItem) {
+      window.transactions.unshift(tempDeletedItem);
+      window.save();
+      window.render();
+      tempDeletedItem = null;
+      window.toast('Восстановлено');
+    }
+  };
+
+  // ================= ТРАНЗАКЦИИ =================
   window.openTxModal = function(id = null) {
-    window.editingTxId = id; const isEdit = id !== null;
+    window.editingTxId = id; 
+    forcedByPlus = false; 
+    
+    const isEdit = id !== null;
     $('txModalTitle').textContent = isEdit ? 'Редактировать запись' : 'Новая запись';
     if (isEdit) {
       const t = window.transactions.find(x => x.id === id);
@@ -124,16 +374,28 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.classList.toggle('is-exp', type === 'expense');
     btn.classList.toggle('is-inc', type === 'income');
     btn.textContent = type === 'expense' ? 'Сохранить расход' : 'Сохранить приход';
-    $('title').placeholder = type === 'expense' ? 'На что потратили? (например: такси 500)' : 'Откуда пришли деньги?';
+    $('title').placeholder = type === 'expense' ? 'На что потратили? (или +500 для прихода)' : 'Откуда пришли деньги?';
     window.renderCategorySelect();
   };
 
   window.parseSmartInput = function(text) {
     if (!text) return;
-    const lowerText = text.toLowerCase();
+
+    const hasPlus = /^\s*\+/.test(text) || /\+\s*\d/.test(text);
+    
+    if (hasPlus) {
+      forcedByPlus = true;
+      if (window.currentType !== 'income') window.setType('income');
+    } else if (forcedByPlus) {
+      forcedByPlus = false;
+      if (window.currentType !== 'expense') window.setType('expense');
+    }
+
+    const cleanText = text.replace(/\+/g, '');
+    const lowerText = cleanText.toLowerCase();
 
     const amountRegex = /(\d+(?:[.,]\d{1,2})?)\s*₽?$/;
-    const amountMatch = text.match(amountRegex) || text.match(/^\s*(\d+(?:[.,]\d{1,2})?)\s*₽?\s+/);
+    const amountMatch = cleanText.match(amountRegex) || cleanText.match(/^\s*(\d+(?:[.,]\d{1,2})?)\s*₽?\s+/);
     if (amountMatch) $('amount').value = parseFloat(amountMatch[1].replace(',', '.'));
 
     const today = new Date();
@@ -144,7 +406,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const y = new Date(today); y.setDate(y.getDate() - 2);
       $('txDate').value = y.toISOString().split('T')[0];
     } else {
-      const dateMatch = text.match(/(\d{1,2})[./](\d{1,2})(?:[./](\d{2,4}))?/);
+      const dateMatch = cleanText.match(/(\d{1,2})[./](\d{1,2})(?:[./](\d{2,4}))?/);
       if (dateMatch) {
         const d = parseInt(dateMatch[1], 10);
         const m = parseInt(dateMatch[2], 10) - 1;
@@ -165,23 +427,37 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!foundCatId) {
       for (const [id, cat] of Object.entries(window.categories)) {
         if (lowerText.includes(cat.name.toLowerCase())) { foundCatId = id; break; }
+        if (cat.keywords && cat.keywords.some(kw => lowerText.includes(kw))) { foundCatId = id; break; }
       }
     }
 
     if (foundCatId) {
       const catObj = window.categories[foundCatId];
-      if (catObj.type !== window.currentType) window.setType(catObj.type);
+      if (catObj.type !== window.currentType && !forcedByPlus) {
+        window.setType(catObj.type);
+      }
       $('category').value = foundCatId;
     }
   };
 
   $('title').addEventListener('input', (e) => window.parseSmartInput(e.target.value));
   $('title').addEventListener('keyup', (e) => window.parseSmartInput(e.target.value));
+  
   $('title').addEventListener('blur', (e) => {
     let title = e.target.value.trim();
     if (!title) return;
-    const cleaned = title.replace(/(\d+(?:[.,]\d{1,2})?)\s*₽?$/g, '').replace(/вчера/gi, '').replace(/позавчера/gi, '').replace(/(\d{1,2})[./](\d{1,2})(?:[./](\d{2,4}))?/g, '').replace(/\s+/g, ' ').trim();
-    if (cleaned && cleaned !== title) e.target.value = cleaned.charAt(0).toUpperCase() + cleaned.slice(1);
+    const cleaned = title.replace(/\+/g, '')
+                         .replace(/(\d+(?:[.,]\d{1,2})?)\s*₽?$/g, '')
+                         .replace(/вчера/gi, '')
+                         .replace(/позавчера/gi, '')
+                         .replace(/(\d{1,2})[./](\d{1,2})(?:[./](\d{2,4}))?/g, '')
+                         .replace(/\s+/g, ' ')
+                         .trim();
+    if (cleaned && cleaned !== title) {
+      e.target.value = cleaned.charAt(0).toUpperCase() + cleaned.slice(1);
+    } else if (!cleaned) {
+      e.target.value = '';
+    }
   });
 
   window.addTransaction = function() {
@@ -192,10 +468,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const category = $('category').value;
     const dateVal = $('txDate').value;
     
-    title = title.replace(/(\d+(?:[.,]\d{1,2})?)\s*₽?$/g, '').replace(/вчера/gi, '').replace(/позавчера/gi, '').replace(/(\d{1,2})[./](\d{1,2})(?:[./](\d{2,4}))?/g, '').replace(/\s+/g, ' ').trim();
+    title = title.replace(/\+/g, '')
+                 .replace(/(\d+(?:[.,]\d{1,2})?)\s*₽?$/g, '')
+                 .replace(/вчера/gi, '')
+                 .replace(/позавчера/gi, '')
+                 .replace(/(\d{1,2})[./](\d{1,2})(?:[./](\d{2,4}))?/g, '')
+                 .replace(/\s+/g, ' ')
+                 .trim();
     if (title) title = title.charAt(0).toUpperCase() + title.slice(1);
 
-    if (!title) { window.toast('Введите описание'); return; }
+    if (!title) {
+      if (window.currentType === 'income') title = 'Доход';
+      else { window.toast('Введите описание'); return; }
+    }
+    
     if (!amount || amount <= 0) { window.toast('Введите сумму'); return; }
     
     const dateStr = dateVal ? new Date(dateVal + 'T12:00:00').toISOString() : new Date().toISOString();
@@ -209,7 +495,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     window.save(); 
     window.closeModal('txModal'); 
-    window.render();
+    window.render(); // Обновит и статистику
     
     if (window.currentType === 'expense' && window.categories[category] && window.categories[category].budget > 0) {
       window.checkBudgetAlert(category);
@@ -240,9 +526,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   };
 
+  // ================= РЕНДЕР ЦЕЛЕЙ =================
   window.updateGoalUI = function() {
     const box = $('goalsList');
-    if (!window.goals.length) { box.innerHTML = `<div class="empty" style="width:100%; padding:10px; background:#fff; border-radius:22px; box-shadow:var(--shadow-card); margin-bottom:12px;">Нет целей. Добавьте первую!</div>`; return; }
+    if (!window.goals.length) { box.innerHTML = `<div class="empty" style="width:100%; padding:10px; background:var(--card); border-radius:22px; box-shadow:var(--shadow-card); margin-bottom:12px;">Нет целей. Добавьте первую!</div>`; return; }
     box.classList.toggle('multi', window.goals.length > 1);
     box.innerHTML = window.goals.map(goal => {
       const saved = window.transactions.filter(e => e.category === 'goal_cat' && e.goalId === goal.id).reduce((sum, e) => sum + e.amount, 0);
@@ -271,18 +558,21 @@ document.addEventListener('DOMContentLoaded', () => {
     $('goalsCount').textContent = window.goals.length || '0';
     if (!window.goals.length) { box.innerHTML = `<div class="empty"><div class="empty-emoji">🎯</div><div class="empty-title">Нет целей</div><div class="empty-sub">Добавьте свою первую цель</div></div>`; return; }
     box.innerHTML = window.goals.map(goal => {
+      const gName = goal.name || goal.title || 'Без названия';
+      const gTarget = goal.target || 0;
       const saved = window.transactions.filter(e => e.category === 'goal_cat' && e.goalId === goal.id).reduce((sum, e) => sum + e.amount, 0);
-      const pct = goal.target > 0 ? Math.min(100, (saved / goal.target) * 100) : 0;
+      const pct = gTarget > 0 ? Math.min(100, (saved / gTarget) * 100) : 0;
       const isDone = pct >= 100;
+      
       return `
         <div class="list-item" style="padding: 14px 0;">
-          <div class="item-icon" style="background:${isDone ? '#eefcf6' : '#eef0ff'}; color:${isDone ? 'var(--green)' : 'var(--brand)'};">🎯</div>
+          <div class="item-icon" style="background:${isDone ? 'rgba(5,150,105,.1)' : 'rgba(99,102,241,.1)'}; color:${isDone ? 'var(--green)' : 'var(--brand)'};">🎯</div>
           <div class="item-info">
-            <div class="item-title">${window.escapeHtml(goal.name)}</div>
-            <div class="item-date">${fmt(saved)} из ${fmt(goal.target)} ₽ (${Math.floor(pct)}%)</div>
+            <div class="item-title">${window.escapeHtml(gName)}</div>
+            <div class="item-date">${fmt(saved)} из ${fmt(gTarget)} ₽ (${Math.floor(pct)}%)</div>
             <div class="budget-bar" style="margin-top:6px;"><div class="budget-bar-fill" style="width:${pct}%; background:${isDone ? 'var(--green)' : 'var(--brand)'}"></div></div>
           </div>
-          <button class="delete-btn" onclick="deleteGoal(${goal.id})" aria-label="Удалить">✕</button>
+          <button type="button" onclick="deleteGoal(${goal.id})" style="width: 32px; height: 32px; border-radius: 50%; background: var(--input-bg); border: none; color: var(--muted); font-size: 16px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; padding: 0;">✕</button>
         </div>`;
     }).join('');
   };
@@ -335,6 +625,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.save(); window.closeModal('goalModal'); window.render(); window.toast('Цель сохранена');
   };
 
+  // ================= КАТЕГОРИИ =================
   window.renderCategorySelect = function() {
     const sel = $('category'); const current = sel.value;
     const available = Object.entries(window.categories).filter(([, c]) => c.type === window.currentType);
@@ -358,9 +649,11 @@ document.addEventListener('DOMContentLoaded', () => {
     window.editingCatId = id;
     $('catEditorTitle').textContent = id ? 'Изменить категорию' : 'Новая категория';
     if (id && window.categories[id]) {
-      $('catName').value = window.categories[id].name; window.pickedEmoji = window.categories[id].emoji; $('catType').value = window.categories[id].type || 'expense';
+      $('catName').value = window.categories[id].name;
+      $('catKeywords').value = (window.categories[id].keywords || []).join(', ');
+      window.pickedEmoji = window.categories[id].emoji; $('catType').value = window.categories[id].type || 'expense';
     } else {
-      $('catName').value = ''; window.pickedEmoji = '🍔'; $('catType').value = window.currentType;
+      $('catName').value = ''; $('catKeywords').value = ''; window.pickedEmoji = '🍔'; $('catType').value = window.currentType;
     }
     window.renderEmojiPicker(); window.closeModal('catsModal'); $('catEditorModal').classList.add('show');
   };
@@ -369,15 +662,22 @@ document.addEventListener('DOMContentLoaded', () => {
   window.pickEmoji = function(e) { window.pickedEmoji = e; $('catEmojiCustom').value = ''; window.renderEmojiPicker(); };
 
   window.saveCategory = function() {
-    const name = $('catName').value.trim(); const custom = $('catEmojiCustom').value.trim();
-    const emoji = custom || window.pickedEmoji; const type = $('catType').value;
+    const name = $('catName').value.trim(); 
+    const custom = $('catEmojiCustom').value.trim();
+    const emoji = custom || window.pickedEmoji; 
+    const type = $('catType').value;
+    const kwString = $('catKeywords').value.trim();
+    const keywords = kwString ? kwString.split(',').map(k => k.trim().toLowerCase()).filter(k => k) : [];
+
     if (!name) { window.toast('Введите название'); return; }
+    
     if (window.editingCatId) {
       const oldBudget = window.categories[window.editingCatId].budget;
-      window.categories[window.editingCatId] = { emoji, name, type, budget: type === 'expense' ? oldBudget : null };
+      window.categories[window.editingCatId] = { emoji, name, type, keywords, budget: type === 'expense' ? oldBudget : null };
     } else {
-      window.categories['cat_' + Date.now()] = { emoji, name, type, budget: null };
+      window.categories['cat_' + Date.now()] = { emoji, name, type, keywords, budget: null };
     }
+    
     window.save(); window.closeModal('catEditorModal'); window.openCatsModal(); window.render(); window.toast('Сохранено');
   };
 
@@ -419,9 +719,20 @@ document.addEventListener('DOMContentLoaded', () => {
   window.importAsFile = function() { window.closeModal('importChoiceModal'); window.triggerImport(); };
   window.importAsText = function() { window.closeModal('importChoiceModal'); window.showImportTextModal(); };
 
+  // ================= ФИЛЬТРЫ, БЮДЖЕТЫ И ГЛАВНЫЙ РЕНДЕР =================
   window.renderFilters = function() {
-    const items = [{ key: 'all', emoji: '📊', name: 'Все' }, ...Object.entries(window.categories).filter(([id]) => !window.hiddenFilters.includes(id)).map(([id, c]) => ({ key: id, ...c }))];
-    if (window.activeFilter !== 'all' && (!window.categories[window.activeFilter] || window.hiddenFilters.includes(window.activeFilter))) window.activeFilter = 'all';
+    const items = [{ key: 'all', emoji: '📊', name: 'Все' }];
+    
+    if (window.transactions.some(t => t.category === 'goal_cat')) {
+      items.push({ key: 'goal_cat', emoji: '🎯', name: 'Цели' });
+    }
+    
+    items.push(...Object.entries(window.categories).filter(([id]) => !window.hiddenFilters.includes(id)).map(([id, c]) => ({ key: id, ...c })));
+    
+    if (window.activeFilter !== 'all' && window.activeFilter !== 'goal_cat' && (!window.categories[window.activeFilter] || window.hiddenFilters.includes(window.activeFilter))) {
+      window.activeFilter = 'all';
+    }
+    
     $('filters').innerHTML = items.map(c => `<div class="chip ${window.activeFilter === c.key ? 'active' : ''}" onclick="setFilter('${c.key}')">${c.emoji} ${window.escapeHtml(c.name)}</div>`).join('');
   };
   window.setFilter = function(key) { window.activeFilter = key; window.render(); };
@@ -473,7 +784,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const catTotalBox = $('catTotal');
     if (window.activeFilter !== 'all') {
       const catSumAllTime = filtered.reduce((s, e) => e.type === 'income' ? s + e.amount : s - e.amount, 0);
-      const catObj = window.categories[window.activeFilter];
+      const catObj = window.activeFilter === 'goal_cat' ? { emoji: '🎯', name: 'Цели' } : window.categories[window.activeFilter];
       let budgetHtml = '';
       if (catObj && catObj.budget && catObj.type === 'expense') {
         const now = new Date();
@@ -490,19 +801,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (filtered.length === 0) {
       list.innerHTML = `<div class="empty"><div class="empty-emoji">🫙</div><div class="empty-title">Пусто</div><div class="empty-sub">Нажмите «+», чтобы добавить</div></div>`;
     } else {
-      list.innerHTML = filtered.map(e => {
-        const isGoalTx = e.category === 'goal_cat';
-        const cat = isGoalTx ? { emoji: '🎯', name: 'Цель' } : (window.categories[e.category] || { emoji: '📦', name: 'Другое' });
-        const isInc = e.type === 'income';
-        return `
-          <div class="list-item">
-            <div class="item-icon ${isInc ? 'inc' : 'exp'}">${cat.emoji}</div>
-            <div class="item-info"><div class="item-title">${window.escapeHtml(e.title)}</div><div class="item-date">${window.escapeHtml(cat.name)} · ${window.formatDate(e.date)}</div></div>
-            <div class="item-amount ${isInc ? 'inc' : 'exp'}">${isInc ? '+' : '−'}${fmt(e.amount)} ₽</div>
-            ${isGoalTx ? '' : `<button class="edit-btn" onclick="openTxModal(${e.id})">✏️</button>`}
-            <button class="delete-btn" onclick="deleteTransaction(${e.id})">✕</button>
-          </div>`;
-      }).join('');
+      list.innerHTML = filtered.map(e => renderListItem(e)).join('');
     }
     window.renderStats();
   };
@@ -530,6 +829,22 @@ document.addEventListener('DOMContentLoaded', () => {
     $('statsIncome').textContent = '+' + fmt(income) + ' ₽';
     $('statsExpense').textContent = '−' + fmt(expense) + ' ₽';
     $('statsPeriodLabel').textContent = window.statsPeriod === 'all' ? 'Всё время' : (window.statsPeriod === 'month' ? 'Этот месяц' : 'Период');
+
+    if (window.statsCategoryFilter) {
+      // Рендерим историю по категории
+      const filteredList = list.filter(t => t.category === window.statsCategoryFilter);
+      $('statsHistoryCount').textContent = filteredList.length || '';
+      
+      const box = $('statsHistoryList');
+      if (filteredList.length === 0) {
+        box.innerHTML = `<div class="empty"><div class="empty-emoji">🫙</div><div class="empty-title">Пусто</div><div class="empty-sub">Нет записей за этот период</div></div>`;
+      } else {
+        box.innerHTML = filteredList.map(e => renderListItem(e)).join('');
+      }
+      return;
+    }
+
+    // Иначе рендерим категории
     const grouped = {};
     list.filter(t => t.type === window.statsKind).forEach(t => { grouped[t.category] = (grouped[t.category] || 0) + t.amount; });
     const entries = Object.entries(grouped).sort((a, b) => b[1] - a[1]);
@@ -541,7 +856,17 @@ document.addEventListener('DOMContentLoaded', () => {
     box.innerHTML = entries.map(([id, val]) => {
       const c = id === 'goal_cat' ? { emoji: '🎯', name: 'Цель' } : (window.categories[id] || { emoji: '📦', name: 'Другое' });
       const pct = total ? Math.round((val / total) * 100) : 0;
-      return `<div class="stat-row"><div class="item-icon">${c.emoji}</div><div class="stat-info"><div class="stat-row-top"><span class="stat-name">${window.escapeHtml(c.name)}</span><span class="stat-amount">${fmt(val)} ₽ · ${pct}%</span></div><div class="stat-bar-bg"><div class="stat-bar-fill" style="width:${pct}%"></div></div></div></div>`;
+      
+      return `<div class="stat-row" onclick="window.openCategoryStatsView('${id}')" style="cursor: pointer;">
+                <div class="item-icon">${c.emoji}</div>
+                <div class="stat-info">
+                  <div class="stat-row-top">
+                    <span class="stat-name">${window.escapeHtml(c.name)}</span>
+                    <span class="stat-amount">${fmt(val)} ₽ · ${pct}%</span>
+                  </div>
+                  <div class="stat-bar-bg"><div class="stat-bar-fill" style="width:${pct}%"></div></div>
+                </div>
+              </div>`;
     }).join('');
   };
 
@@ -650,6 +975,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Первичная инициализация
+  initTheme(); // Включаем тему
   $('heroDate').textContent = new Date().toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' });
   window.setType('expense'); 
   window.processFixedExpenses(); 
