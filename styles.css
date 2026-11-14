@@ -328,4 +328,4 @@ input:checked + .theme-slider:before { transform: translateX(22px); }
 }
 .toast.show { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
 .toast button { background: #fbbf24; color: #000; border: none; padding: 4px 10px; border-radius: 8px; font-weight: 800; font-size: 13px; cursor: pointer; width: auto; margin: 0; }
-#installAppBtn { display: none; background: linear-gradient(135deg, #10b981, #059669); color: #fff; box-shadow: 0 8px 20px -8px rgba(16,185,129,.8); margin-bottom: 16px; }
+#installAppBtn { display: none; background: linear-gradient(135deg, #10b981, #059669); color: #fff; box-shadow: 0 8px 20px -8px rgba(16,185,129,.8); margin-bottom: 16px; } 
