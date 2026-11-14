@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#4f46e5">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="apple-touch-icon" href="icon.svg">
+
+<!-- Шрифты -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<!-- Стили -->
+<link rel="stylesheet" href="styles.css">
+<title>Мои финансы</title>
+</head>
+<body>
+
+<main id="appMain">
+  <!-- ГЛАВНОЕ -->
+  <section class="page active" id="page-home">
+    <header class="hero">
+      <div class="hero-top"><div class="brand">Мои финансы</div><div class="hero-date" id="heroDate"></div></div>
+      <div class="balance-label">Текущий баланс</div>
+      <div class="balance" id="balance">0 <small>₽</small></div>
+      <div class="stats">
+        <div class="stat"><div class="stat-label">Доходы</div><div class="stat-val" id="statIncome">+0 ₽</div></div>
+        <div class="stat"><div class="stat-label">Расходы</div><div class="stat-val" id="statExpense">−0 ₽</div></div>
+      </div>
+    </header>
+    <div class="container">
+      <button class="primary" id="installAppBtn" onclick="installPWA()">📲 Установить приложение</button>
+      <div class="goals-scroll" id="goalsList"></div>
+      <button class="secondary" style="width:100%; margin-bottom:12px;" onclick="openGoalModal()">+ Добавить новую цель</button>
+      <div class="card" id="budgetsCard" style="display: none;">
+        <div class="section-title" style="margin-top:0; margin-bottom:12px; padding:0;">Бюджеты на месяц</div>
+        <div id="budgetsList"></div>
+      </div>
+      <div class="filters-row">
+        <div class="filters" id="filters"></div>
+        <button class="settings-btn" onclick="openFilterSettings()" aria-label="Настройка фильтров истории">⚙️</button>
+      </div>
+      <div class="section-title"><span>История</span><span class="count" id="historyCount"></span></div>
+      <div class="cat-total" id="catTotal"></div>
+      <div class="card" id="list"></div>
+    </div>
+  </section>
+
+  <!-- СТАТИСТИКА -->
+  <section class="page" id="page-stats">
+    <header class="hero slim">
+      <div class="hero-top"><div class="brand">Статистика</div><div class="hero-date" id="statsPeriodLabel">Всё время</div></div>
+      <div class="stats">
+        <div class="stat"><div class="stat-label">Доходы</div><div class="stat-val" id="statsIncome">+0 ₽</div></div>
+        <div class="stat"><div class="stat-label">Расходы</div><div class="stat-val" id="statsExpense">−0 ₽</div></div>
+      </div>
+    </header>
+    <div class="container">
+      <div class="period-chips">
+        <button class="chip active" data-period="all" onclick="setStatsPeriod('all')">Всё время</button>
+        <button class="chip" data-period="month" onclick="setStatsPeriod('month')">Месяц</button>
+        <button class="chip" data-period="custom" onclick="setStatsPeriod('custom')">Период</button>
+      </div>
+      <div class="custom-date-row" id="customDateRow" style="display: none;">
+        <input type="date" id="statsDateFrom" onchange="renderStats()">
+        <span style="color: var(--muted);">—</span>
+        <input type="date" id="statsDateTo" onchange="renderStats()">
+      </div>
+      <div class="seg" id="kindSeg">
+        <button class="active" data-kind="expense" onclick="setStatsKind('expense')">Расходы</button>
+        <button data-kind="income" onclick="setStatsKind('income')">Доходы</button>
+      </div>
+      <div class="section-title"><span id="statsKindTitle">Расходы по категориям</span></div>
+      <div class="card" id="statsList"></div>
+    </div>
+  </section>
+
+  <!-- ЦЕЛИ -->
+  <section class="page" id="page-goals">
+    <header class="hero slim">
+      <div class="hero-top"><div class="brand">Цели</div><div class="hero-date" id="goalPercentLabel">0%</div></div>
+      <div class="balance-label">Накоплено на цели</div>
+      <div class="balance" id="goalHeroAmount">0 <small>₽</small></div>
+    </header>
+    <div class="container">
+      <div class="section-title" style="margin-top:0"><span>Мои цели</span><span class="count" id="goalsCount"></span></div>
+      <div class="card" id="goalsListVertical" style="padding: 0 16px;"></div>
+      <button class="primary" style="margin-top:16px;" onclick="openGoalModal()">+ Добавить новую цель</button>
+    </div>
+  </section>
+
+  <!-- ПРОФИЛЬ -->
+  <section class="page" id="page-profile">
+    <header class="hero slim">
+      <div class="hero-top"><div class="brand">Профиль</div></div>
+      <div class="profile-head">
+        <div class="avatar">🧑</div>
+        <div><div class="profile-name">Мой профиль</div><div class="profile-sub">Данные хранятся на устройстве</div></div>
+      </div>
+    </header>
+    <div class="container">
+      <div class="section-title" style="margin-top:6px"><span>Настройки</span></div>
+      <div class="card menu">
+        <button class="menu-row" onclick="openFixedModal()"><span class="menu-ic">🔁</span><span class="menu-label">Регулярные платежи</span><span class="menu-arrow">›</span></button>
+        <button class="menu-row" onclick="openCatsModal()"><span class="menu-ic">🏷️</span><span class="menu-label">Категории</span><span class="menu-arrow">›</span></button>
+        <button class="menu-row" onclick="openLimitsModal()"><span class="menu-ic">📊</span><span class="menu-label">Лимиты на месяц</span><span class="menu-arrow">›</span></button>
+        <button class="menu-row" onclick="showAIReport()"><span class="menu-ic">🤖</span><span class="menu-label">Отчёт для ИИ</span><span class="menu-arrow">›</span></button>
+        <button class="menu-row" onclick="openExportModal()"><span class="menu-ic">📤</span><span class="menu-label">Экспорт данных</span><span class="menu-arrow">›</span></button>
+        <button class="menu-row" onclick="openImportModal()"><span class="menu-ic">📥</span><span class="menu-label">Импорт данных</span><span class="menu-arrow">›</span></button>
+        <button class="menu-row danger" onclick="clearAllData()"><span class="menu-ic">🗑️</span><span class="menu-label">Очистить все записи</span><span class="menu-arrow">›</span></button>
+      </div>
+      <div class="about">Мои финансы · v1.5.0<br>Все данные остаются только у вас</div>
+    </div>
+  </section>
+</main>
+
+<input type="file" id="importFile" accept=".json,application/json" style="display: none;" onchange="handleImport(event)">
+<button class="fab" id="fab" onclick="openTxModal()" aria-label="Добавить запись"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+
+<nav class="bottom-nav" id="bottomNav">
+  <button class="nav-item active" data-tab="home" onclick="switchTab('home')"><svg viewBox="0 0 24 24"><path d="M3.5 11 12 4l8.5 7"/><path d="M5.5 9.8V20h13V9.8"/></svg><span>Главное</span></button>
+  <button class="nav-item" data-tab="stats" onclick="switchTab('stats')"><svg viewBox="0 0 24 24"><path d="M5 20v-7"/><path d="M12 20V6"/><path d="M19 20v-10"/></svg><span>Статистика</span></button>
+  <button class="nav-item" data-tab="goals" onclick="switchTab('goals')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="3.5"/></svg><span>Цели</span></button>
+  <button class="nav-item" data-tab="profile" onclick="switchTab('profile')"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.8"/><path d="M4.8 20c1.3-3.8 3.8-5.6 7.2-5.6s5.9 1.8 7.2 5.6"/></svg><span>Профиль</span></button>
+</nav>
+
+<!-- МОДАЛКИ (сгруппированы для компактности) -->
+<div class="modal-bg" id="txModal">
+  <div class="modal">
+    <div class="modal-handle"></div><h2 id="txModalTitle">Новая запись</h2>
+    <div class="add-form">
+      <div class="type-switch" id="typeSwitch">
+        <div class="type-thumb"></div>
+        <button class="active" id="btnTypeExp" onclick="setType('expense')">− Расход</button>
+        <button id="btnTypeInc" onclick="setType('income')">+ Приход</button>
+      </div>
+      <div class="row">
+        <input type="number" id="amount" placeholder="0 ₽" inputmode="decimal" min="0" step="0.01">
+        <select id="category"></select>
+      </div>
+      <input type="text" id="title" placeholder="На что потратили? (например: такси 500 вчера)" maxlength="50">
+      <input type="date" id="txDate" style="color:var(--ink); font-weight:600;">
+      <button class="primary is-exp" id="submitBtn" onclick="addTransaction()">Добавить расход</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="goalModal">
+  <div class="modal">
+    <div class="modal-handle"></div><h2 id="goalModalTitle">Новая цель</h2>
+    <div class="add-form">
+      <input type="text" id="goalNameInput" placeholder="Название" maxlength="30">
+      <input type="number" id="goalTargetInput" placeholder="Целевая сумма" min="0" inputmode="decimal">
+      <input type="number" id="goalAddAmount" placeholder="Сразу отложить (опционально)" min="0" inputmode="decimal">
+    </div>
+    <div class="modal-actions">
+      <button class="secondary" onclick="closeModal('goalModal')">Отмена</button>
+      <button class="primary" onclick="saveGoal()">Сохранить</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="catsModal">
+  <div class="modal">
+    <div class="modal-handle"></div><h2>Категории</h2>
+    <div id="catsList"></div>
+    <button class="secondary" style="margin-top:16px" onclick="openCatEditor()">+ Новая категория</button>
+    <div class="modal-actions"><button class="secondary" onclick="closeModal('catsModal')">Готово</button></div>
+  </div>
+</div>
+
+<div class="modal-bg" id="catEditorModal">
+  <div class="modal">
+    <div class="modal-handle"></div><h2 id="catEditorTitle">Новая категория</h2>
+    <div class="add-form">
+      <input type="text" id="catName" placeholder="Название" maxlength="20">
+      <select id="catType"><option value="expense">Для расходов</option><option value="income">Для доходов</option></select>
+      <div><div class="hint">Выберите иконку</div><div class="emoji-picker" id="emojiPicker"></div></div>
+      <input type="text" id="catEmojiCustom" placeholder="Или свой эмодзи" maxlength="4">
+    </div>
+    <div class="modal-actions">
+      <button class="secondary" onclick="closeModal('catEditorModal')">Отмена</button>
+      <button class="primary" onclick="saveCategory()">Сохранить</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="limitsModal">
+  <div class="modal">
+    <div class="modal-handle"></div><h2>Лимиты на месяц</h2>
+    <p class="confirm-text" style="margin-top:-8px">Укажите лимит для категории. Оставьте пустым, если лимита нет.</p>
+    <div class="filter-list" id="limitsList" style="max-height: 60vh;"></div>
+    <div class="modal-actions"><button class="primary" onclick="saveLimits()">Сохранить</button></div>
+  </div>
+</div>
+
+<div class="modal-bg" id="exportChoiceModal">
+  <div class="modal">
+    <div class="modal-handle"></div><h2>Экспорт данных</h2>
+    <div class="menu" style="padding: 0;">
+      <button class="menu-row" onclick="exportAsFile()"><span class="menu-ic">📄</span><span class="menu-label">Скачать JSON файл</span></button>
+      <button class="menu-row" onclick="exportAsText()"><span class="menu-ic">📋</span><span class="menu-label">Копировать как текст</span></button>
+    </div>
+    <div class="modal-actions"><button class="secondary" onclick="closeModal('exportChoiceModal')">Отмена</button></div>
+  </div>
+</div>
+
+<div class="modal-bg" id="importChoiceModal">
+  <div class="modal">
+    <div class="modal-handle"></div><h2>Импорт данных</h2>
+    <p class="confirm-text" style="margin-top:-8px; color: var(--red);">Внимание: текущие данные будут заменены!</p>
+    <div class="menu" style="padding: 0;">
+      <button class="menu-row" onclick="importAsFile()"><span class="menu-ic">📁</span><span class="menu-label">Выбрать файл (JSON)</span></button>
+      <button class="menu-row" onclick="importAsText()"><span class="menu-ic">📋</span><span class="menu-label">Вставить текст</span></button>
+    </div>
+    <div class="modal-actions"><button class="secondary" onclick="closeModal('importChoiceModal')">Отмена</button></div>
+  </div>
+</div>
+
+<div class="modal-bg" id="fixedModal">
+  <div class="modal">
+    <div class="modal-handle"></div><h2>Регулярные платежи</h2>
+    <div id="fixedList"></div>
+    <button class="secondary" style="margin-top:16px" onclick="openFixedEditor()">+ Добавить</button>
+    <div class="modal-actions"><button class="secondary" onclick="closeModal('fixedModal')">Готово</button></div>
+  </div>
+</div>
+
+<div class="modal-bg" id="fixedEditorModal">
+  <div class="modal">
+    <div class="modal-handle"></div><h2 id="fixedEditorTitle">Новый платеж</h2>
+    <div class="add-form">
+      <input type="text" id="fixedName" placeholder="Название" maxlength="30">
+      <input type="number" id="fixedAmount" placeholder="Сумма" min="0" step="0.01" inputmode="decimal">
+      <select id="fixedCategory" style="flex: none; width: 100%;"></select>
+      <input type="date" id="fixedDate" style="width: 100%;">
+    </div>
+    <div class="modal-actions">
+      <button class="secondary" onclick="closeModal('fixedEditorModal')">Отмена</button>
+      <button class="primary" onclick="saveFixed()">Сохранить</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="filterSettingsModal">
+  <div class="modal">
+    <div class="modal-handle"></div><h2>Фильтр истории</h2>
+    <div class="filter-list" id="filterSettingsList"></div>
+    <div class="modal-actions"><button class="primary" onclick="closeModal('filterSettingsModal')">Готово</button></div>
+  </div>
+</div>
+
+<div class="modal-bg" id="aiReportModal">
+  <div class="modal">
+    <div class="modal-handle"></div><h2>Отчёт для ИИ</h2>
+    <textarea id="aiReportTextarea" readonly style="width:100%; height:260px; font-family:monospace; font-size:11px; resize:none; background:#f4f5fa; border-radius:14px; padding:12px; border:1.5px solid var(--line); outline:none; margin-bottom:12px;"></textarea>
+    <button class="primary" onclick="copyAIReport()">📋 Копировать</button>
+    <div class="modal-actions"><button class="secondary" onclick="closeModal('aiReportModal')">Закрыть</button></div>
+  </div>
+</div>
+
+<div class="modal-bg" id="backupModal">
+  <div class="modal">
+    <div class="modal-handle"></div><h2>Текст бэкапа</h2>
+    <textarea id="backupTextarea" readonly></textarea>
+    <button class="primary" onclick="copyBackupText()">📋 Копировать</button>
+    <div class="modal-actions"><button class="secondary" onclick="closeModal('backupModal')">Закрыть</button></div>
+  </div>
+</div>
+
+<div class="modal-bg" id="importTextModal">
+  <div class="modal">
+    <div class="modal-handle"></div><h2>Импорт</h2>
+    <textarea id="importTextarea" placeholder="Вставьте JSON..."></textarea>
+    <div class="modal-actions">
+      <button class="secondary" onclick="closeModal('importTextModal')">Отмена</button>
+      <button class="primary" onclick="importFromText()">Импортировать</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="confirmModal">
+  <div class="modal">
+    <div class="modal-handle"></div><h2 id="confirmTitle">Удалить?</h2>
+    <p class="confirm-text" id="confirmText"></p>
+    <div class="modal-actions">
+      <button class="secondary" onclick="closeModal('confirmModal')">Отмена</button>
+      <button class="primary danger" id="confirmOk">Удалить</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- Подключаем JS -->
+<script src="app.js"></script>
+</body>
+</html>
