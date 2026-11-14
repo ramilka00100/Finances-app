@@ -207,7 +207,41 @@ input:checked + .theme-slider:before { transform: translateX(22px); }
 .toast { position: fixed; left: 50%; bottom: calc(86px + env(safe-area-inset-bottom)); transform: translate(-50%, 16px); background: var(--ink); color: var(--card); font-size: 13.5px; font-weight: 700; padding: 13px 22px; border-radius: 15px; opacity: 0; pointer-events: none; transition: opacity .25s, transform .25s cubic-bezier(.32,.72,0,1); z-index: 200; box-shadow: 0 16px 34px -12px rgba(16,21,43,.65); max-width: calc(100% - 40px); width: calc(100% - 32px); display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .toast.show { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
 .toast button { background: #fbbf24; color: #000; border: none; padding: 4px 10px; border-radius: 8px; font-weight: 800; font-size: 13px; cursor: pointer; width: auto; margin: 0; }
-#installAppBtn { display: none; background: linear-gradient(135deg, #10b981, #059669); color: #fff; box-shadow: 0 8px 20px -8px rgba(16,185,129,.8); margin-bottom: 16px; }
+
+/* Установка */
+#installAppBtn { display: none; background: linear-gradient(135deg, #10b981, #059669); color: #fff; box-shadow: 0 8px 20px -8px rgba(16,185,129,.8); margin-bottom: 12px; }
+
+/* Баннер обновления */
+#updateBanner {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: #fff;
+  font-weight: 700;
+  font-size: 14px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 8px 20px -8px rgba(16,185,129,.6);
+  animation: updateSlide .35s cubic-bezier(.32,.72,0,1);
+}
+#updateBanner.show { display: flex; }
+#updateBanner button {
+  background: #fff;
+  color: #059669;
+  border: none;
+  border-radius: 10px;
+  padding: 8px 14px;
+  font-weight: 800;
+  font-size: 13px;
+  cursor: pointer;
+  width: auto;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(0,0,0,.1);
+}
+@keyframes updateSlide { from { opacity: 0; transform: translateY(-10px); } }
 </style>
 </head>
 <body>
@@ -224,6 +258,10 @@ input:checked + .theme-slider:before { transform: translateX(22px); }
       </div>
     </header>
     <div class="container">
+      <div id="updateBanner">
+        <span>🎉 Доступно обновление приложения</span>
+        <button onclick="applyUpdate()">Обновить</button>
+      </div>
       <button class="primary" id="installAppBtn" onclick="installPWA()">📲 Установить приложение</button>
       <div class="goals-scroll" id="goalsList"></div>
       <button class="secondary" style="width:100%; margin-bottom:12px;" onclick="openGoalModal()">+ Добавить новую цель</button>
@@ -316,9 +354,14 @@ input:checked + .theme-slider:before { transform: translateX(22px); }
           <span class="menu-ic">🌙</span><span class="menu-label">Тёмная тема</span>
           <label class="theme-switch"><input type="checkbox" id="themeToggle" onchange="toggleTheme()"><span class="theme-slider"></span></label>
         </div>
+        <button class="menu-row" onclick="forceRefresh()">
+          <span class="menu-ic">🔄</span>
+          <span class="menu-label">Очистить кэш и перезагрузить</span>
+          <span class="menu-arrow">›</span>
+        </button>
         <button class="menu-row danger" onclick="clearAllData()"><span class="menu-ic">🗑️</span><span class="menu-label">Очистить все записи</span><span class="menu-arrow">›</span></button>
       </div>
-      <div class="about">Мои финансы · v1.8.4<br>Все данные остаются только у вас</div>
+      <div class="about">Мои финансы · v1.9.0<br>Все данные остаются только у вас</div>
     </div>
   </section>
 </main>
@@ -1034,13 +1077,116 @@ document.addEventListener('DOMContentLoaded', () => {
   };
   window.copyAIReport = () => { $('aiReportTextarea').select(); document.execCommand('copy'); window.toast('Скопировано!'); };
 
-  let deferredPrompt;
-  window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferredPrompt = e; $('installAppBtn').style.display = 'block'; });
-  window.installPWA = function() { if (deferredPrompt) { deferredPrompt.prompt(); deferredPrompt.userChoice.then(r => { if (r.outcome === 'accepted') $('installAppBtn').style.display = 'none'; deferredPrompt = null; }); } };
+  /* ================= PWA: УСТАНОВКА + ОБНОВЛЕНИЯ ================= */
+  let deferredPrompt = null;
+  let newWorker = null;
+  let swRegistration = null;
+  let refreshing = false;
 
-  if ('serviceWorker' in navigator && window.location.protocol !== 'file:') {
-    window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(console.error));
+  const isStandalone = () => window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+  const isIOS = () => /iPad|iPhone|iPod/.test(navigator.userAgent);
+
+  function showInstallButton() {
+    const btn = $('installAppBtn');
+    if (btn && !isStandalone()) btn.style.display = 'block';
   }
+  function hideInstallButton() {
+    const btn = $('installAppBtn');
+    if (btn) btn.style.display = 'none';
+  }
+
+  window.addEventListener('beforeinstallprompt', e => {
+    e.preventDefault();
+    deferredPrompt = e;
+    showInstallButton();
+  });
+  window.addEventListener('appinstalled', () => {
+    hideInstallButton();
+    window.toast('Приложение установлено!');
+  });
+
+  window.installPWA = async function () {
+    if (isStandalone()) return;
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      deferredPrompt = null;
+      if (outcome === 'accepted') hideInstallButton();
+      return;
+    }
+    if (isIOS()) window.toast('Нажмите ⬆️ (Поделиться) → «На экран Домой»');
+    else window.toast('Меню браузера (⋮) → «Установить приложение»');
+  };
+
+  async function initServiceWorker() {
+    if (!('serviceWorker' in navigator)) return;
+    if (location.protocol === 'file:') { showInstallButton(); return; }
+
+    try {
+      swRegistration = await navigator.serviceWorker.register('./sw.js');
+      swRegistration.update().catch(() => {});
+
+      if (swRegistration.waiting && navigator.serviceWorker.controller) {
+        newWorker = swRegistration.waiting;
+        $('updateBanner').classList.add('show');
+      }
+
+      swRegistration.addEventListener('updatefound', () => {
+        const installing = swRegistration.installing;
+        if (!installing) return;
+        installing.addEventListener('statechange', () => {
+          if (installing.state === 'installed' && navigator.serviceWorker.controller) {
+            newWorker = installing;
+            $('updateBanner').classList.add('show');
+          }
+        });
+      });
+    } catch (e) {
+      console.warn('[SW] registration failed:', e);
+      showInstallButton();
+    }
+  }
+
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (!refreshing) { refreshing = true; window.location.reload(); }
+    });
+  }
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible' && swRegistration) swRegistration.update().catch(() => {});
+  });
+
+  window.applyUpdate = function () {
+    if (newWorker) newWorker.postMessage({ type: 'SKIP_WAITING' });
+    else if (swRegistration) swRegistration.update();
+  };
+
+  window.forceRefresh = function () {
+    window.askConfirm(
+      'Очистить кэш и обновиться?',
+      'Приложение скачает свежие файлы с сервера. Ваши записи, категории, цели и настройки НЕ пострадают.',
+      'Очистить и обновить',
+      async () => {
+        try {
+          if ('caches' in window) {
+            const keys = await caches.keys();
+            await Promise.all(keys.map(k => caches.delete(k)));
+          }
+          if ('serviceWorker' in navigator) {
+            const regs = await navigator.serviceWorker.getRegistrations();
+            await Promise.all(regs.map(r => r.unregister()));
+          }
+        } catch (e) { console.warn(e); }
+        window.location.reload();
+      }
+    );
+  };
+
+  initServiceWorker();
+  if (!isStandalone()) showInstallButton();
+  /* ============================================================== */
+
   if ('Notification' in window && Notification.permission === 'default') setTimeout(() => Notification.requestPermission(), 5000);
 
   document.querySelectorAll('.modal-bg').forEach(bg => bg.addEventListener('click', e => { if (e.target === bg) bg.classList.remove('show'); }));
