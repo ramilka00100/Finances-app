@@ -982,4 +982,4 @@ document.addEventListener('DOMContentLoaded', () => {
   window.render(); 
   initDraggableModals();
 
-});
+})
