@@ -532,6 +532,15 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   window.transactions.forEach(t => { if (t.category === 'goal_cat' && !t.goalId) t.goalId = window.goals[0].id; });
 
+  // === ВАЖНО: window.save перенесен сюда, чтобы не было ошибки is not a function ===
+  window.save = function() {
+    localStorage.setItem('categories', JSON.stringify(window.categories));
+    localStorage.setItem('transactions', JSON.stringify(window.transactions));
+    localStorage.setItem('goals', JSON.stringify(window.goals));
+    localStorage.setItem('hiddenFilters', JSON.stringify(window.hiddenFilters));
+    localStorage.setItem('fixedExpenses', JSON.stringify(window.fixedExpenses));
+  };
+
   const fallbackExpense = window.categories['other'] ? 'other' : (Object.keys(window.categories).find(k => window.categories[k].type === 'expense') || 'other');
   const fallbackIncome = window.categories['other_inc'] ? 'other_inc' : (Object.keys(window.categories).find(k => window.categories[k].type === 'income') || 'salary');
   let orphansFixed = false;
@@ -705,13 +714,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  window.save = function() {
-    localStorage.setItem('categories', JSON.stringify(window.categories));
-    localStorage.setItem('transactions', JSON.stringify(window.transactions));
-    localStorage.setItem('goals', JSON.stringify(window.goals));
-    localStorage.setItem('hiddenFilters', JSON.stringify(window.hiddenFilters));
-    localStorage.setItem('fixedExpenses', JSON.stringify(window.fixedExpenses));
-  };
   window.escapeHtml = s => { if (!s) return ''; const d = document.createElement('div'); d.textContent = s; return d.innerHTML; };
   let toastTimer;
   window.toast = function(msg) { const el = $('toast'); el.innerHTML = msg; el.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove('show'), 3000); };
