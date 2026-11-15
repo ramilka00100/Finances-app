@@ -421,22 +421,22 @@ input:checked + .theme-slider:before { transform: translateX(22px); }
 document.addEventListener('DOMContentLoaded', () => {
 
   const DEFAULT_CATS = {
-    food:       { emoji: '🛒',  name: 'Продукты',       type: 'expense', budget: null, keywords: ['продукты','магнит','пятёрочка','пятак','чижик','находка','светофор','вкусвилл'] },
-    cafe:       { emoji: '🍔',  name: 'Кафе/фастфуд',   type: 'expense', budget: null, keywords: ['мак','кфс','бургер','пекарня','ростикс','вкусно','кофе','обед','кафе','ресторан','пицца','суши','шаурма','завтрак','ужин','перекус','чай'] },
-    transport:  { emoji: '🚕',  name: 'Транспорт',      type: 'expense', budget: null, keywords: ['такси','метро','автобус','каршеринг','проезд','билет','электричка','самокат','яндекс го'] },
-    bensin:     { emoji: '⛽',  name: 'Бензин',          type: 'expense', budget: null, keywords: ['бенз','бензин','заправка','лукоил','тебоил','татнефть','таиф'] },
-    auto:       { emoji: '🚗',  name: 'Авто',            type: 'expense', budget: null, keywords: ['запчасти','ремонт','шинка','шиномонтаж'] },
-    home:       { emoji: '🏠',  name: 'Для дома',        type: 'expense', budget: null, keywords: ['мегастрой','леруа','лерой','стройка','обои','аренда','квартира','жкх','коммуналка','мебель','икеа','дом','быт'] },
+    food:       { emoji: '🛒',  name: 'Продукты',       type: 'expense', budget: null, keywords: ['продукты','магнит','пятёрочка','пятак','чижик','находка','светофор','вкусвилл','хавчик','еда','жрачка','лента','ашан','перекресток','дикси'] },
+    cafe:       { emoji: '🍔',  name: 'Кафе/фастфуд',   type: 'expense', budget: null, keywords: ['мак','кфс','бургер','пекарня','ростикс','вкусно','кофе','обед','кафе','ресторан','пицца','суши','шаурма','завтрак','ужин','перекус','чай','донер','фастфуд','столовая'] },
+    transport:  { emoji: '🚕',  name: 'Транспорт',      type: 'expense', budget: null, keywords: ['такси','метро','автобус','каршеринг','проезд','билет','электричка','самокат','яндекс го','троллейбус','трамвай'] },
+    bensin:     { emoji: '⛽',  name: 'Бензин',          type: 'expense', budget: null, keywords: ['бенз','бензин','заправка','лукоил','тебоил','татнефть','таиф','азс','95','92','100'] },
+    auto:       { emoji: '🚗',  name: 'Авто',            type: 'expense', budget: null, keywords: ['запчасти','ремонт','шинка','шиномонтаж','авто','машина'] },
+    home:       { emoji: '🏠',  name: 'Для дома',        type: 'expense', budget: null, keywords: ['мегастрой','леруа','лерой','стройка','обои','аренда','квартира','жкх','коммуналка','мебель','икеа','дом','быт','химия','бытовуха','посуда'] },
     credit:     { emoji: '💳',  name: 'Кредиты',         type: 'expense', budget: null, keywords: ['ипотека','займ','кредит'] },
     gosuslugi:  { emoji: '🏛️', name: 'Госуслуги',       type: 'expense', budget: null, keywords: ['штраф','налог','госпошлина'] },
-    clothes:    { emoji: '👕',  name: 'Одежда',          type: 'expense', budget: null, keywords: ['шмот','обувь','тапки','спортмастер','одежда','кроссовки'] },
-    internet:   { emoji: '📱',  name: 'Интернет/связь',  type: 'expense', budget: null, keywords: ['домру','таттелеком','мобила','теле2','мтс','мегафон'] },
-    tobacco:    { emoji: '🚬',  name: 'Табак',           type: 'expense', budget: null, keywords: ['сиги','сишки','сигареты'] },
-    alcohol:    { emoji: '🍺',  name: 'Алкоголь',        type: 'expense', budget: null, keywords: ['кб','бристоль','пиво','бар'] },
+    clothes:    { emoji: '👕',  name: 'Одежда',          type: 'expense', budget: null, keywords: ['шмот','обувь','тапки','спортмастер','одежда','кроссовки','кроссы','шмотки','футболка','джинсы'] },
+    internet:   { emoji: '📱',  name: 'Интернет/связь',  type: 'expense', budget: null, keywords: ['домру','таттелеком','мобила','теле2','мтс','мегафон','связь','интернет'] },
+    tobacco:    { emoji: '🚬',  name: 'Табак',           type: 'expense', budget: null, keywords: ['сиги','сишки','сигареты','вейп','айкос','стик','снюс','табак','сих','шихн'] },
+    alcohol:    { emoji: '🍺',  name: 'Алкоголь',        type: 'expense', budget: null, keywords: ['кб','бристоль','пиво','бар','пивас','алкоголь','вино','водка','виски','коньяк','сидр','пивко'] },
     health:     { emoji: '💊',  name: 'Здоровье',        type: 'expense', budget: null, keywords: ['аптека','врач','таблетки','лекарства','анализы','стоматолог','больница','здоровье'] },
     insurance:  { emoji: '🛡️', name: 'Страхование',     type: 'expense', budget: null, keywords: ['страховка'] },
-    kids:       { emoji: '👶',  name: 'Для детей',       type: 'expense', budget: null, keywords: ['дм','детский мир'] },
-    sport:      { emoji: '🏋️', name: 'Спорт',           type: 'expense', budget: null, keywords: ['рыбалка','фитнес'] },
+    kids:       { emoji: '👶',  name: 'Для детей',       type: 'expense', budget: null, keywords: ['дм','детский мир','дети','ребенок','детишки','подгузники','памперсы','игрушки'] },
+    sport:      { emoji: '🏋️', name: 'Спорт',           type: 'expense', budget: null, keywords: ['рыбалка','фитнес','спортзал','качалка'] },
     fun:        { emoji: '🎉',  name: 'Развлечения',     type: 'expense', budget: null, keywords: ['кино','игра','концерт','театр','подписка','нетфликс','развлечения','гулянка'] },
     shop:       { emoji: '🛍️', name: 'Покупки',         type: 'expense', budget: null, keywords: ['озон','вайлдберриз','маркет','покупки'] },
     pets:       { emoji: '🐾',  name: 'Питомцы',         type: 'expense', budget: null, keywords: ['корм','ветеринар','зоомагазин','наполнитель','vet'] },
@@ -455,7 +455,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   window.categories = JSON.parse(localStorage.getItem('categories') || 'null') || JSON.parse(JSON.stringify(DEFAULT_CATS));
   
-  const CATS_VERSION = 3;
+  const CATS_VERSION = 4; // Версия 4 для принудительного обновления ключевых слов
   const currentCatsVersion = parseInt(localStorage.getItem('catsVersion') || '0');
   if (currentCatsVersion < CATS_VERSION) {
     if (currentCatsVersion < 2) {
@@ -466,13 +466,6 @@ document.addEventListener('DOMContentLoaded', () => {
       if (window.categories.home && window.categories.home.name === 'Дом') {
         window.categories.home.name = 'Для дома';
       }
-      Object.entries(window.categories).forEach(([id, cat]) => {
-        if (DEFAULT_CATS[id] && cat) {
-          const userKw = cat.keywords || [];
-          const defKw = DEFAULT_CATS[id].keywords || [];
-          cat.keywords = [...new Set([...userKw, ...defKw])];
-        }
-      });
       V2_IDS.forEach(id => {
         if (!window.categories[id] && DEFAULT_CATS[id]) {
           window.categories[id] = JSON.parse(JSON.stringify(DEFAULT_CATS[id]));
@@ -497,11 +490,21 @@ document.addEventListener('DOMContentLoaded', () => {
         window.categories = rebuilt;
       }
     }
+    if (currentCatsVersion < 4) {
+      // Обновляем ключевые слова для ВСЕХ существующих категорий (сливаем с новыми)
+      Object.entries(window.categories).forEach(([id, cat]) => {
+        if (DEFAULT_CATS[id] && cat) {
+          const userKw = cat.keywords || [];
+          const defKw = DEFAULT_CATS[id].keywords || [];
+          cat.keywords = [...new Set([...userKw, ...defKw])];
+        }
+      });
+    }
     localStorage.setItem('catsVersion', CATS_VERSION.toString());
     localStorage.setItem('categories', JSON.stringify(window.categories));
   }
 
-  // === SANITIZE DATA (Fix for "all broken") ===
+  // === SANITIZE DATA ===
   window.transactions  = JSON.parse(localStorage.getItem('transactions')  || '[]');
   window.hiddenFilters = JSON.parse(localStorage.getItem('hiddenFilters') || '[]');
   window.fixedExpenses = JSON.parse(localStorage.getItem('fixedExpenses') || '[]');
@@ -532,7 +535,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   window.transactions.forEach(t => { if (t.category === 'goal_cat' && !t.goalId) t.goalId = window.goals[0].id; });
 
-  // === ВАЖНО: window.save перенесен сюда, чтобы не было ошибки is not a function ===
   window.save = function() {
     localStorage.setItem('categories', JSON.stringify(window.categories));
     localStorage.setItem('transactions', JSON.stringify(window.transactions));
@@ -541,21 +543,53 @@ document.addEventListener('DOMContentLoaded', () => {
     localStorage.setItem('fixedExpenses', JSON.stringify(window.fixedExpenses));
   };
 
+  // === УМНЫЙ ПОИСК КАТЕГОРИИ ПО ОПИСАНИЮ ===
+  window.findCategoryByTitle = function(title, type) {
+    if (!title) return null;
+    const lowerText = title.toLowerCase();
+    let foundCatId = null, bestLen = 0;
+    for (const [id, cat] of Object.entries(window.categories)) {
+      if (!cat || cat.type !== type) continue;
+      const n = cat.name.toLowerCase();
+      if (lowerText.includes(n) && n.length > bestLen) { foundCatId = id; bestLen = n.length; }
+      for (const kw of (cat.keywords || [])) {
+        if (lowerText.includes(kw) && kw.length > bestLen) { foundCatId = id; bestLen = kw.length; }
+      }
+    }
+    return foundCatId;
+  };
+
   const fallbackExpense = window.categories['other'] ? 'other' : (Object.keys(window.categories).find(k => window.categories[k].type === 'expense') || 'other');
   const fallbackIncome = window.categories['other_inc'] ? 'other_inc' : (Object.keys(window.categories).find(k => window.categories[k].type === 'income') || 'salary');
   let orphansFixed = false;
+
+  // 1. Восстанавливаем "осиротевшие" транзакции
   window.transactions.forEach(t => {
     if (t.category !== 'goal_cat' && !window.categories[t.category]) {
-      t.category = (t.type === 'income' ? fallbackIncome : fallbackExpense);
+      const matchedId = window.findCategoryByTitle(t.title, t.type);
+      t.category = matchedId || (t.type === 'income' ? fallbackIncome : fallbackExpense);
       orphansFixed = true;
     }
   });
   window.fixedExpenses.forEach(fx => {
     if (!window.categories[fx.categoryId]) {
-      fx.categoryId = fallbackExpense;
+      const matchedId = window.findCategoryByTitle(fx.title, 'expense');
+      fx.categoryId = matchedId || fallbackExpense;
       orphansFixed = true;
     }
   });
+
+  // 2. ПЕРЕСОРТИРОВКА старых транзакций из "Другое"
+  window.transactions.forEach(t => {
+    if (t.category === 'other' || t.category === 'other_inc') {
+      const betterCat = window.findCategoryByTitle(t.title, t.type);
+      if (betterCat && betterCat !== 'other' && betterCat !== 'other_inc') {
+        t.category = betterCat;
+        orphansFixed = true;
+      }
+    }
+  });
+
   if (orphansFixed) window.save();
 
   window.activeFilter = 'all';
@@ -1154,7 +1188,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.toast('Сохранено');
   };
   window.deleteCategory = function(id) {
-    window.askConfirm(`Удалить "${window.categories[id].name}"?`, 'Записи перейдут в "Другое".', 'Удалить', () => {
+    window.askConfirm(`Удалить "${window.categories[id].name}"?`, 'Записи перейдут в подходящие категории по описанию (или в "Другое").', 'Удалить', () => {
       const cat = window.categories[id];
       const fallbackExpense = window.categories['other'] ? 'other' : (Object.keys(window.categories).find(k => window.categories[k].type === 'expense') || 'other');
       const fallbackIncome = window.categories['other_inc'] ? 'other_inc' : (Object.keys(window.categories).find(k => window.categories[k].type === 'income') || 'salary');
@@ -1162,13 +1196,15 @@ document.addEventListener('DOMContentLoaded', () => {
       
       window.transactions.forEach(t => {
         if (t.category === id) {
-          t.category = fallbackId;
+          const matchedId = window.findCategoryByTitle(t.title, t.type);
+          t.category = matchedId || fallbackId;
         }
       });
       
       window.fixedExpenses.forEach(fx => {
         if (fx.categoryId === id) {
-          fx.categoryId = fallbackExpense;
+          const matchedId = window.findCategoryByTitle(fx.title, 'expense');
+          fx.categoryId = matchedId || fallbackExpense;
         }
       });
 
