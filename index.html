@@ -16,7 +16,6 @@
 
 <title>Мои финансы</title>
 <style>
-/* ================= БАЗА ================= */
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 :root { --bg: #f3f4fa; --card: #ffffff; --ink: #10152b; --ink-2: #4a5470; --muted: #8b93a9; --line: #ecedf4; --brand: #4f46e5; --green: #059669; --red: #e11d48; --shadow-card: 0 6px 20px -8px rgba(16,24,40,.12), 0 1px 3px rgba(16,24,40,.04); --nav-bg: rgba(255,255,255,.84); --input-bg: #f7f8fc; --type-switch-bg: #f3f4fa; --seg-bg: #eceef6; --body-gradient: radial-gradient(900px 380px at 50% -160px, #e6e4ff 0%, rgba(230,228,255,0) 70%); }
 [data-theme="dark"] { --bg: #0f111a; --card: #181b26; --ink: #f8fafc; --ink-2: #cbd5e1; --muted: #64748b; --line: #2a2f45; --brand: #6366f1; --green: #10b981; --red: #f43f5e; --shadow-card: 0 6px 20px -8px rgba(0,0,0,.6), 0 1px 3px rgba(0,0,0,.4); --nav-bg: rgba(24,27,38,.84); --input-bg: #232736; --type-switch-bg: #232736; --seg-bg: #232736; --body-gradient: radial-gradient(900px 380px at 50% -160px, #1e1b4b 0%, rgba(30,27,75,0) 70%); }
@@ -108,22 +107,18 @@ button.secondary:active { transform: scale(.975); background: var(--line); }
 .cat-total-val { font-weight: 800; font-size: 16px; color: var(--ink); font-variant-numeric: tabular-nums; }
 .swipe-wrap { position: relative; overflow: hidden; background: var(--card); border-bottom: 1px solid var(--line); }
 .swipe-wrap:last-child { border-bottom: none; }
-
-/* === ПАТЧ 1: cursor:pointer и :active для фонов свайпа === */
 .swipe-bg-edit, .swipe-bg-delete { position: absolute; inset: 0; display: none; align-items: center; color: #fff; font-weight: 800; font-size: 15px; z-index: 1; cursor: pointer; }
 .swipe-bg-edit { background: #10b981; padding-left: 24px; justify-content: flex-start; gap: 8px; }
 .swipe-bg-delete { background: #e11d48; padding-right: 24px; justify-content: flex-end; gap: 8px; }
 .swipe-bg-edit:active { filter: brightness(0.9); }
 .swipe-bg-delete:active { filter: brightness(0.9); }
-/* ======================================================== */
-
 .bg-text { opacity: 0; transition: opacity 0.1s; white-space: nowrap; } .bg-emoji { font-size: 20px; }
 .list-item { position: relative; z-index: 2; background: var(--card); display: flex; align-items: center; gap: 12px; padding: 11px 0; transform: translateX(0); transition: transform 0.2s ease, background-color 0.3s; touch-action: pan-y; }
 .list-item:first-child { padding-top: 4px; }
 .item-icon { width: 44px; height: 44px; border-radius: 14px; display: grid; place-items: center; font-size: 20px; flex-shrink: 0; background: var(--input-bg); }
 .item-icon.exp { background: rgba(225,29,72,.1); } .item-icon.inc { background: rgba(5,150,105,.1); }
 .item-info { flex: 1; min-width: 0; }
-.item-title { font-weight: 700; font-size: 14.5px; letter-spacing: -.15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--ink); }
+.item-title { font-weight: 800; font-size: 14.5px; letter-spacing: -.15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--ink); }
 .item-date { font-size: 11.5px; font-weight: 600; color: var(--muted); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .item-amount { font-weight: 800; font-size: 14.5px; white-space: nowrap; letter-spacing: -.2px; font-variant-numeric: tabular-nums; padding-right: 12px; }
 .item-amount.exp { color: var(--red); } .item-amount.inc { color: var(--green); }
@@ -200,10 +195,12 @@ input:checked + .theme-slider:before { transform: translateX(22px); }
 .cats-section-head.expense { color: var(--red); } .cats-section-head.expense .dot { background: var(--red); }
 .cats-section-head.income { color: var(--green); } .cats-section-head.income .dot { background: var(--green); }
 .cats-section-list { background: var(--input-bg); border: 1px solid var(--line); border-radius: 16px; padding: 4px 12px; }
-.cat-row { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--line); }
+.cat-row { display: flex; align-items: center; gap: 6px; padding: 9px 0; border-bottom: 1px solid var(--line); }
 .cat-row:last-child { border-bottom: none; }
 .cat-row .item-icon { width: 40px; height: 40px; font-size: 18px; border-radius: 13px; }
 .cat-row .name { flex: 1; min-width: 0; font-weight: 700; font-size: 14.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--ink); }
+.cat-row .move-btn { width: 26px; height: 26px; font-size: 10px; color: var(--muted); }
+.cat-row .move-btn:disabled { opacity: 0.25; pointer-events: none; }
 .icon-btn { width: 32px; height: 32px; flex-shrink: 0; border: none; background: transparent; border-radius: 10px; display: grid; place-items: center; font-size: 15px; cursor: pointer; padding: 0; transition: .15s; }
 .icon-btn:active { background: var(--line); transform: scale(.9); }
 .emoji-picker { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
@@ -337,7 +334,7 @@ input:checked + .theme-slider:before { transform: translateX(22px); }
         </button>
         <button class="menu-row danger" onclick="clearAllData()"><span class="menu-ic">🗑️</span><span class="menu-label">Очистить все записи</span><span class="menu-arrow">›</span></button>
       </div>
-      <div class="about">Мои финансы · v1.9.1<br>Все данные остаются только у вас</div>
+      <div class="about">Мои финансы · v2.1.0<br>Все данные остаются только у вас</div>
     </div>
   </section>
 </main>
@@ -407,26 +404,114 @@ input:checked + .theme-slider:before { transform: translateX(22px); }
 
 <div class="modal-bg" id="confirmModal"><div class="modal"><div class="modal-handle"></div><h2 id="confirmTitle">Удалить?</h2><p class="confirm-text" id="confirmText"></p><div class="modal-actions"><button class="secondary" onclick="closeModal('confirmModal')">Отмена</button><button class="primary danger" id="confirmOk">Удалить</button></div></div></div>
 
+<div class="modal-bg" id="passwordModal"><div class="modal"><div class="modal-handle"></div>
+  <h2 id="passwordModalTitle">Пароль</h2>
+  <p class="confirm-text" id="passwordModalHint" style="margin-top:-8px">Введите пароль для шифрования.</p>
+  <input type="password" id="passwordInput" placeholder="Пароль" autocomplete="new-password" style="margin-bottom:10px;">
+  <input type="password" id="passwordConfirm" placeholder="Повторите пароль" autocomplete="new-password" style="display:none; margin-bottom:10px;">
+  <div class="modal-actions">
+    <button class="secondary" onclick="closeModal('passwordModal')">Отмена</button>
+    <button class="primary" id="passwordOkBtn">Готово</button>
+  </div>
+</div></div>
+
 <div class="toast" id="toast"></div>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+
+  // ===== DEFAULT_CATS: новые категории (pets/beauty/education/investment) стоят ПЕРЕД other =====
   const DEFAULT_CATS = {
-    food:      { emoji: '🍔', name: 'Еда', type: 'expense', budget: null, keywords: [] },
-    transport: { emoji: '🚕', name: 'Транспорт', type: 'expense', budget: null, keywords: [] },
-    home:      { emoji: '🏠', name: 'Дом', type: 'expense', budget: null, keywords: [] },
-    health:    { emoji: '💊', name: 'Здоровье', type: 'expense', budget: null, keywords: [] },
-    fun:       { emoji: '🎉', name: 'Развлечения', type: 'expense', budget: null, keywords: [] },
-    shop:      { emoji: '🛍️', name: 'Покупки', type: 'expense', budget: null, keywords: [] },
-    other:     { emoji: '📦', name: 'Другое', type: 'expense', budget: null, keywords: [] },
-    salary:    { emoji: '💼', name: 'Зарплата', type: 'income', budget: null, keywords: [] },
-    gift:      { emoji: '🎁', name: 'Подарок', type: 'income', budget: null, keywords: [] },
-    cashback:  { emoji: '💸', name: 'Кэшбэк', type: 'income', budget: null, keywords: [] },
-    other_inc: { emoji: '💰', name: 'Другое', type: 'income', budget: null, keywords: [] }
+    // === РАСХОДЫ ===
+    food:       { emoji: '🛒',  name: 'Продукты',       type: 'expense', budget: null, keywords: ['продукты','магнит','пятёрочка','пятак','чижик','находка','светофор','вкусвилл'] },
+    cafe:       { emoji: '🍔',  name: 'Кафе/фастфуд',   type: 'expense', budget: null, keywords: ['мак','кфс','бургер','пекарня','ростикс','вкусно','кофе','обед','кафе','ресторан','пицца','суши','шаурма','завтрак','ужин','перекус','чай'] },
+    transport:  { emoji: '🚕',  name: 'Транспорт',      type: 'expense', budget: null, keywords: ['такси','метро','автобус','каршеринг','проезд','билет','электричка','самокат','яндекс го'] },
+    bensin:     { emoji: '⛽',  name: 'Бензин',          type: 'expense', budget: null, keywords: ['бенз','бензин','заправка','лукоил','тебоил','татнефть','таиф'] },
+    auto:       { emoji: '🚗',  name: 'Авто',            type: 'expense', budget: null, keywords: ['запчасти','ремонт','шинка','шиномонтаж'] },
+    home:       { emoji: '🏠',  name: 'Для дома',        type: 'expense', budget: null, keywords: ['мегастрой','леруа','лерой','стройка','обои','аренда','квартира','жкх','коммуналка','мебель','икеа','дом','быт'] },
+    credit:     { emoji: '💳',  name: 'Кредиты',         type: 'expense', budget: null, keywords: ['ипотека','займ','кредит'] },
+    gosuslugi:  { emoji: '🏛️', name: 'Госуслуги',       type: 'expense', budget: null, keywords: ['штраф','налог','госпошлина'] },
+    clothes:    { emoji: '👕',  name: 'Одежда',          type: 'expense', budget: null, keywords: ['шмот','обувь','тапки','спортмастер','одежда','кроссовки'] },
+    internet:   { emoji: '📱',  name: 'Интернет/связь',  type: 'expense', budget: null, keywords: ['домру','таттелеком','мобила','теле2','мтс','мегафон'] },
+    tobacco:    { emoji: '🚬',  name: 'Табак',           type: 'expense', budget: null, keywords: ['сиги','сишки','сигареты'] },
+    alcohol:    { emoji: '🍺',  name: 'Алкоголь',        type: 'expense', budget: null, keywords: ['кб','бристоль','пиво','бар'] },
+    health:     { emoji: '💊',  name: 'Здоровье',        type: 'expense', budget: null, keywords: ['аптека','врач','таблетки','лекарства','анализы','стоматолог','больница','здоровье'] },
+    insurance:  { emoji: '🛡️', name: 'Страхование',     type: 'expense', budget: null, keywords: ['страховка'] },
+    kids:       { emoji: '👶',  name: 'Для детей',       type: 'expense', budget: null, keywords: ['дм','детский мир'] },
+    sport:      { emoji: '🏋️', name: 'Спорт',           type: 'expense', budget: null, keywords: ['рыбалка','фитнес'] },
+    fun:        { emoji: '🎉',  name: 'Развлечения',     type: 'expense', budget: null, keywords: ['кино','игра','концерт','театр','подписка','нетфликс','развлечения','гулянка'] },
+    shop:       { emoji: '🛍️', name: 'Покупки',         type: 'expense', budget: null, keywords: ['озон','вайлдберриз','маркет','покупки'] },
+    // --- НОВЫЕ (v3) ---
+    pets:       { emoji: '🐾',  name: 'Питомцы',         type: 'expense', budget: null, keywords: ['корм','ветеринар','зоомагазин','наполнитель','vet'] },
+    beauty:     { emoji: '💅',  name: 'Красота',         type: 'expense', budget: null, keywords: ['салон','стрижка','маникюр','косметика','спа','барбер'] },
+    education:  { emoji: '📚',  name: 'Образование',     type: 'expense', budget: null, keywords: ['курсы','книги','репетитор','обучение','школа'] },
+    investment: { emoji: '📈',  name: 'Инвестиции',      type: 'expense', budget: null, keywords: ['брокер','акции','вклад','инвестиции'] },
+    // --- ДРУГОЕ всегда последнее среди расходов ---
+    other:      { emoji: '📦',  name: 'Другое',          type: 'expense', budget: null, keywords: [] },
+    // === ДОХОДЫ ===
+    salary:     { emoji: '💼', name: 'Зарплата', type: 'income', budget: null, keywords: ['зарплата','аванс','зп'] },
+    gift:       { emoji: '🎁', name: 'Подарок',  type: 'income', budget: null, keywords: ['подарок','подарили'] },
+    cashback:   { emoji: '💸', name: 'Кэшбэк',   type: 'income', budget: null, keywords: ['кэшбэк','cashback','бонус'] },
+    other_inc:  { emoji: '💰', name: 'Другое',   type: 'income', budget: null, keywords: [] }
   };
 
-  window.categories    = JSON.parse(localStorage.getItem('categories')    || 'null') || { ...DEFAULT_CATS };
+  // Список "старых" (v2) id — для поэтапной миграции
+  const V2_IDS = ['food','cafe','transport','bensin','auto','home','credit','gosuslugi','clothes','internet','tobacco','alcohol','health','insurance','kids','sport','fun','shop','other','salary','gift','cashback','other_inc'];
+  // Список новых (v3) id — вставляются ПЕРЕД 'other'
+  const V3_NEW_IDS = ['pets','beauty','education','investment'];
+
+  window.categories = JSON.parse(localStorage.getItem('categories') || 'null') || JSON.parse(JSON.stringify(DEFAULT_CATS));
   for (let id in window.categories) { if (!window.categories[id].keywords) window.categories[id].keywords = []; }
+
+  // ===== Миграция категорий до v3 =====
+  const CATS_VERSION = 3;
+  const currentCatsVersion = parseInt(localStorage.getItem('catsVersion') || '0');
+  if (currentCatsVersion < CATS_VERSION) {
+    // --- v1 → v2: мягкий ребрендинг, слияние keywords, добавление v2-категорий ---
+    if (currentCatsVersion < 2) {
+      if (window.categories.food && window.categories.food.name === 'Еда') {
+        window.categories.food.name = 'Продукты';
+        window.categories.food.emoji = '🛒';
+      }
+      if (window.categories.home && window.categories.home.name === 'Дом') {
+        window.categories.home.name = 'Для дома';
+      }
+      Object.entries(window.categories).forEach(([id, cat]) => {
+        if (DEFAULT_CATS[id]) {
+          const userKw = cat.keywords || [];
+          const defKw = DEFAULT_CATS[id].keywords || [];
+          cat.keywords = [...new Set([...userKw, ...defKw])];
+        }
+      });
+      V2_IDS.forEach(id => {
+        if (!window.categories[id] && DEFAULT_CATS[id]) {
+          window.categories[id] = JSON.parse(JSON.stringify(DEFAULT_CATS[id]));
+        }
+      });
+    }
+    // --- v2 → v3: добавляем новые категории ПЕРЕД 'other' (сохраняя порядок) ---
+    if (currentCatsVersion < 3) {
+      const missing = V3_NEW_IDS.filter(id => !window.categories[id]);
+      if (missing.length > 0) {
+        const rebuilt = {};
+        let insertedBeforeOther = false;
+        Object.entries(window.categories).forEach(([id, cat]) => {
+          if (id === 'other' && !insertedBeforeOther) {
+            missing.forEach(nid => { rebuilt[nid] = JSON.parse(JSON.stringify(DEFAULT_CATS[nid])); });
+            insertedBeforeOther = true;
+          }
+          rebuilt[id] = cat;
+        });
+        if (!insertedBeforeOther) {
+          missing.forEach(nid => { rebuilt[nid] = JSON.parse(JSON.stringify(DEFAULT_CATS[nid])); });
+        }
+        window.categories = rebuilt;
+      }
+    }
+    localStorage.setItem('catsVersion', CATS_VERSION.toString());
+    localStorage.setItem('categories', JSON.stringify(window.categories));
+  }
+
   window.transactions  = JSON.parse(localStorage.getItem('transactions')  || '[]');
   window.hiddenFilters = JSON.parse(localStorage.getItem('hiddenFilters') || '[]');
   window.fixedExpenses = JSON.parse(localStorage.getItem('fixedExpenses') || '[]');
@@ -452,20 +537,91 @@ document.addEventListener('DOMContentLoaded', () => {
   let forcedByPlus = false;
   let tempDeletedItem = null;
 
-  const EMOJI_CHOICES = ['🍔','🚕','🏠','💊','🎉','🛍️','📦','☕','🍕','🍺','✈️','🎮','📚','🐾','👶','💻','🎵','🚗','⛽','💡','🧾','🎁','💅','🏋️','🚬','💍','🏦','📱','🎬','🌮','💼','💸','💰','💵','🏆','🤑','🎯'];
-  const CAT_KEYWORDS = {
-    food: ['еда', 'еду', 'кофе', 'обед', 'кафе', 'ресторан', 'мак', 'пятёрочка', 'магнит', 'пицца', 'суши', 'бургер', 'продукты', 'чай', 'перекус', 'шаурма', 'вкусвилл', 'завтрак', 'ужин'],
-    transport: ['такси', 'метро', 'автобус', 'бензин', 'заправка', 'каршеринг', 'проезд', 'билет', 'электричка', 'самокат', 'яндекс го'],
-    home: ['аренда', 'квартира', 'жкх', 'коммуналка', 'ремонт', 'мебель', 'икеа', 'дом', 'быт'],
-    health: ['аптека', 'врач', 'таблетки', 'лекарства', 'анализы', 'стоматолог', 'больница', 'здоровье'],
-    fun: ['кино', 'бар', 'пиво', 'игра', 'концерт', 'театр', 'подписка', 'нетфликс', 'развлечения', 'гулянка'],
-    shop: ['одежда', 'кроссовки', 'обувь', 'шмот', 'озон', 'вайлдберриз', 'маркет', 'покупки'],
-    salary: ['зарплата', 'аванс', 'зп'],
-    gift: ['подарок', 'подарили']
-  };
+  const EMOJI_CHOICES = ['🍔','🚕','🏠','💊','🎉','🛍️','📦','☕','🍕','🍺','✈️','🎮','📚','🐾','👶','💻','🎵','🚗','⛽','💡','🧾','🎁','💅','🏋️','🚬','💍','🏦','📱','🎬','🌮','💼','💸','💰','💵','🏆','🤑','🎯','🛒','💳','🏛️','👕','🛡️','🍴','📈'];
 
   const $ = id => document.getElementById(id);
   const fmt = n => n.toLocaleString('ru-RU', { maximumFractionDigits: 2 });
+
+  const TABS = ['home', 'stats', 'goals', 'profile'];
+  let suppressPopstate = false;
+  history.replaceState({ app: 'home' }, '');
+
+  window.showModal = function(id) {
+    if ($(id).classList.contains('show')) return;
+    $(id).classList.add('show');
+    history.pushState({ modal: id }, '');
+  };
+  window.replaceModal = function(oldId, newId) {
+    $(oldId).classList.remove('show');
+    if (!$(newId).classList.contains('show')) {
+      $(newId).classList.add('show');
+      if (history.state && history.state.modal === oldId) {
+        history.replaceState({ modal: newId }, '');
+      } else {
+        history.pushState({ modal: newId }, '');
+      }
+    }
+  };
+  window.closeModal = function(id) {
+    const el = $(id);
+    if (!el || !el.classList.contains('show')) return;
+    el.classList.remove('show');
+    if (history.state && history.state.modal === id) {
+      suppressPopstate = true;
+      history.back();
+      setTimeout(() => { suppressPopstate = false; }, 200);
+    }
+  };
+  function internalSwitchTab(tab) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    $('page-' + tab).classList.add('active');
+    document.querySelectorAll('.nav-item').forEach(btn => btn.classList.toggle('active', btn.dataset.tab === tab));
+    $('fab').classList.toggle('hidden', tab === 'profile' || tab === 'goals');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  window.switchTab = tab => {
+    if ($('page-' + tab).classList.contains('active')) return;
+    internalSwitchTab(tab);
+    if (tab !== 'home') history.pushState({ tab }, '');
+  };
+  function hideStatsCategoryView() {
+    window.statsCategoryFilter = null;
+    $('statsCategoriesView').style.display = 'block';
+    $('statsHistoryHeader').style.display = 'none';
+    $('statsHistoryView').style.display = 'none';
+    $('kindSeg').style.display = 'grid';
+    window.renderStats();
+  }
+  function showStatsCategoryView(catId) {
+    window.statsCategoryFilter = catId;
+    const cat = catId === 'goal_cat' ? { emoji: '🎯', name: 'Цели' } : window.categories[catId];
+    $('statsCategoryName').textContent = `${cat.emoji} ${cat.name}`;
+    $('statsCategoriesView').style.display = 'none';
+    $('statsHistoryHeader').style.display = 'block';
+    $('statsHistoryView').style.display = 'block';
+    $('kindSeg').style.display = 'none';
+    window.renderStats();
+  }
+  window.openCategoryStatsView = function(catId) {
+    showStatsCategoryView(catId);
+    history.pushState({ statsCategory: catId }, '');
+  };
+  window.closeStatsCategoryView = function() {
+    hideStatsCategoryView();
+    if (history.state && history.state.statsCategory) {
+      suppressPopstate = true;
+      history.back();
+      setTimeout(() => { suppressPopstate = false; }, 200);
+    }
+  };
+  window.addEventListener('popstate', () => {
+    if (suppressPopstate) { suppressPopstate = false; return; }
+    const openModals = document.querySelectorAll('.modal-bg.show');
+    if (openModals.length > 0) { openModals[openModals.length - 1].classList.remove('show'); return; }
+    if (window.statsCategoryFilter) { hideStatsCategoryView(); return; }
+    const activeTab = TABS.find(t => $('page-' + t).classList.contains('active'));
+    if (activeTab && activeTab !== 'home') internalSwitchTab('home');
+  });
 
   function initTheme() {
     const savedTheme = localStorage.getItem('theme');
@@ -503,59 +659,40 @@ document.addEventListener('DOMContentLoaded', () => {
   window.escapeHtml = s => { if (!s) return ''; const d = document.createElement('div'); d.textContent = s; return d.innerHTML; };
   let toastTimer;
   window.toast = function(msg) { const el = $('toast'); el.innerHTML = msg; el.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove('show'), 3000); };
-  window.closeModal = id => $(id).classList.remove('show');
-  window.askConfirm = (title, text, okLabel, action) => { $('confirmTitle').textContent = title; $('confirmText').textContent = text; $('confirmOk').textContent = okLabel; window.confirmAction = action; $('confirmModal').classList.add('show'); };
-
-  const TABS = ['home', 'stats', 'goals', 'profile'];
-  window.switchTab = tab => {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    $('page-' + tab).classList.add('active');
-    document.querySelectorAll('.nav-item').forEach(btn => btn.classList.toggle('active', btn.dataset.tab === tab));
-    $('fab').classList.toggle('hidden', tab === 'profile' || tab === 'goals');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+  window.askConfirm = (title, text, okLabel, action) => {
+    $('confirmTitle').textContent = title;
+    $('confirmText').textContent = text;
+    $('confirmOk').textContent = okLabel;
+    window.confirmAction = action;
+    window.showModal('confirmModal');
   };
 
-  window.openCategoryStatsView = catId => {
-    window.statsCategoryFilter = catId;
-    const cat = catId === 'goal_cat' ? { emoji: '🎯', name: 'Цели' } : window.categories[catId];
-    $('statsCategoryName').textContent = `${cat.emoji} ${cat.name}`;
-    $('statsCategoriesView').style.display = 'none';
-    $('statsHistoryHeader').style.display = 'block';
-    $('statsHistoryView').style.display = 'block';
-    $('kindSeg').style.display = 'none';
-    window.renderStats();
-  };
-  window.closeStatsCategoryView = () => {
-    window.statsCategoryFilter = null;
-    $('statsCategoriesView').style.display = 'block';
-    $('statsHistoryHeader').style.display = 'none';
-    $('statsHistoryView').style.display = 'none';
-    $('kindSeg').style.display = 'grid';
-    window.renderStats();
-  };
-
-  // === ПАТЧ 2: onclick на фонах свайпа ===
   function renderListItem(e) {
     const isGoalTx = e.category === 'goal_cat';
     const cat = isGoalTx ? { emoji: '🎯', name: 'Цель' } : (window.categories[e.category] || { emoji: '📦', name: 'Другое' });
     const isInc = e.type === 'income';
+    let displayTitle = e.title || '';
+    if (!isGoalTx && displayTitle) {
+      const cleaned = displayTitle.replace(/\s*\d+(?:[.,]\d{1,2})?\s*₽?\s*$/g, '').trim();
+      if (cleaned) displayTitle = cleaned;
+    }
     return `<div class="swipe-wrap">
       <div class="swipe-bg-edit" onclick="handleEditTap(event, ${e.id}, ${isGoalTx})">
-        <span class="bg-emoji">✏️</span>
-        <span class="bg-text">Изменить</span>
+        <span class="bg-emoji">✏️</span><span class="bg-text">Изменить</span>
       </div>
       <div class="swipe-bg-delete" onclick="handleDeleteTap(event, ${e.id})">
-        <span class="bg-text">Удалить</span>
-        <span class="bg-emoji">🗑️</span>
+        <span class="bg-text">Удалить</span><span class="bg-emoji">🗑️</span>
       </div>
       <div class="list-item swipeable" data-id="${e.id}" data-goal="${isGoalTx}" data-translate="0">
         <div class="item-icon ${isInc ? 'inc' : 'exp'}">${cat.emoji}</div>
-        <div class="item-info"><div class="item-title">${window.escapeHtml(e.title)}</div><div class="item-date">${window.escapeHtml(cat.name)} · ${window.formatDate(e.date)}</div></div>
+        <div class="item-info">
+          <div class="item-title">${window.escapeHtml(cat.name)}</div>
+          <div class="item-date">${window.escapeHtml(displayTitle)} · ${window.formatDate(e.date)}</div>
+        </div>
         <div class="item-amount ${isInc ? 'inc' : 'exp'}">${isInc ? '+' : '−'}${fmt(e.amount)} ₽</div>
       </div>
     </div>`;
   }
-  // ====================================
 
   let touchStartX = 0, touchStartY = 0;
   document.addEventListener('touchstart', e => {
@@ -570,14 +707,12 @@ document.addEventListener('DOMContentLoaded', () => {
       const currentIdx = TABS.findIndex(t => $('page-' + t).classList.contains('active'));
       if (currentIdx === -1) return;
       if (diffX < -60 && currentIdx < TABS.length - 1) window.switchTab(TABS[currentIdx + 1]);
-      if (diffX >  60 && currentIdx > 0) switchTab(TABS[currentIdx - 1]);
+      if (diffX >  60 && currentIdx > 0) window.switchTab(TABS[currentIdx - 1]);
     }
   }, { passive: true });
 
   let openItem = null;
   let swipeStartX = 0, swipeStartY = 0, swipeCurrentItem = null, currentTranslate = 0;
-
-  // === ПАТЧ 4: игнорируем тапы по фонам свайпа ===
   document.addEventListener('touchstart', e => {
     if (openItem && !e.target.closest('.swipeable') && !e.target.closest('.swipe-bg-delete') && !e.target.closest('.swipe-bg-edit')) {
       openItem.style.transform = 'translateX(0)';
@@ -586,7 +721,6 @@ document.addEventListener('DOMContentLoaded', () => {
       openItem = null;
     }
   }, { passive: true });
-  // ============================================
 
   function setupSwipe(containerId) {
     const container = $(containerId);
@@ -660,7 +794,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   setupSwipe('list'); setupSwipe('statsHistoryList');
 
-  // === ПАТЧ 3: функции тапа по корзине и карандашу ===
   window.handleDeleteTap = function (event, id) {
     event.stopPropagation();
     const wrap = event.currentTarget.closest('.swipe-wrap');
@@ -675,11 +808,9 @@ document.addEventListener('DOMContentLoaded', () => {
     wrap.querySelectorAll('.bg-text').forEach(el => el.style.opacity = 0);
     tempDeletedItem = window.transactions[idx];
     window.transactions.splice(idx, 1);
-    window.save();
-    window.render();
+    window.save(); window.render();
     window.toast(`Удалено <button onclick="window.undoDelete()">Отменить</button>`);
   };
-
   window.handleEditTap = function (event, id, isGoal) {
     event.stopPropagation();
     const wrap = event.currentTarget.closest('.swipe-wrap');
@@ -693,8 +824,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (isGoal) { window.toast('Цель нельзя редактировать'); return; }
     window.openTxModal(id);
   };
-  // =====================================================
-
   window.undoDelete = function() {
     if (tempDeletedItem) { window.transactions.unshift(tempDeletedItem); window.save(); window.render(); tempDeletedItem = null; window.toast('Восстановлено'); }
   };
@@ -713,7 +842,8 @@ document.addEventListener('DOMContentLoaded', () => {
       $('txDate').value = new Date().toISOString().split('T')[0];
       window.setType('expense');
     }
-    $('txModal').classList.add('show'); setTimeout(() => $('amount').focus(), 320);
+    window.showModal('txModal');
+    setTimeout(() => $('title').focus(), 320);
   };
   window.setType = function(type) {
     window.currentType = type;
@@ -726,6 +856,24 @@ document.addEventListener('DOMContentLoaded', () => {
     $('title').placeholder = type === 'expense' ? 'На что потратили? (или +500 для прихода)' : 'Откуда пришли деньги?';
     window.renderCategorySelect();
   };
+
+  $('category').addEventListener('change', e => {
+    const title = $('title').value.trim();
+    if (!title) return;
+    const catId = e.target.value;
+    const cat = window.categories[catId];
+    if (!cat) return;
+    const cleaned = title.replace(/\d+([.,]\d+)?/g, ' ').replace(/[₽.,!?]/g, ' ').trim().toLowerCase();
+    const stop = ['купил','купила','потратил','потратила','заплатил','заплатила','оплатил','оплатила','на','за','в','из','с','по','и'];
+    const keyword = cleaned.split(/\s+/).find(w => w.length >= 2 && !stop.includes(w));
+    if (!keyword) return;
+    if (!cat.keywords) cat.keywords = [];
+    if (cat.keywords.includes(keyword)) return;
+    cat.keywords.push(keyword);
+    window.save();
+    window.toast(`🔑 «${keyword}» добавлено в ключевые`);
+  });
+
   window.parseSmartInput = function(text) {
     if (!text) return;
     const hasPlus = /^\s*\+/.test(text) || /\+\s*\d/.test(text);
@@ -749,14 +897,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!isNaN(parsedD.getTime())) $('txDate').value = parsedD.toISOString().split('T')[0];
       }
     }
-    let foundCatId = null;
-    for (const [catId, keywords] of Object.entries(CAT_KEYWORDS)) {
-      if (keywords.some(kw => lowerText.includes(kw))) { if (window.categories[catId]) { foundCatId = catId; break; } }
-    }
-    if (!foundCatId) {
-      for (const [id, cat] of Object.entries(window.categories)) {
-        if (lowerText.includes(cat.name.toLowerCase())) { foundCatId = id; break; }
-        if (cat.keywords && cat.keywords.some(kw => lowerText.includes(kw))) { foundCatId = id; break; }
+    let foundCatId = null, bestLen = 0;
+    for (const [id, cat] of Object.entries(window.categories)) {
+      const n = cat.name.toLowerCase();
+      if (lowerText.includes(n) && n.length > bestLen) { foundCatId = id; bestLen = n.length; }
+      for (const kw of (cat.keywords || [])) {
+        if (lowerText.includes(kw) && kw.length > bestLen) { foundCatId = id; bestLen = kw.length; }
       }
     }
     if (foundCatId) {
@@ -853,7 +999,7 @@ document.addEventListener('DOMContentLoaded', () => {
     $('goalModalTitle').textContent = isEdit ? 'Изменить цель' : 'Новая цель';
     if (isEdit) { const g = window.goals.find(x => x.id === id); $('goalNameInput').value = g.name; $('goalTargetInput').value = g.target; }
     else { $('goalNameInput').value = ''; $('goalTargetInput').value = ''; }
-    $('goalAddAmount').value = ''; $('goalModal').classList.add('show');
+    $('goalAddAmount').value = ''; window.showModal('goalModal');
   };
   window.saveGoal = function() {
     const name = $('goalNameInput').value.trim();
@@ -876,12 +1022,47 @@ document.addEventListener('DOMContentLoaded', () => {
     sel.innerHTML = available.map(([id, c]) => `<option value="${id}">${c.emoji} ${window.escapeHtml(c.name)}</option>`).join('');
     if (available.some(([id]) => id === current)) sel.value = current;
   };
-  window.openCatsModal = function() { window.renderCatsList(); $('catsModal').classList.add('show'); };
+  window.openCatsModal = function() { window.renderCatsList(); window.showModal('catsModal'); };
+
+  window.moveCategory = function(id, dir) {
+    const cat = window.categories[id];
+    if (!cat) return;
+    const typeKeys = Object.keys(window.categories).filter(k => window.categories[k].type === cat.type);
+    const idx = typeKeys.indexOf(id);
+    const newIdx = idx + dir;
+    if (newIdx < 0 || newIdx >= typeKeys.length) return;
+    const targetId = typeKeys[newIdx];
+    const keys = Object.keys(window.categories);
+    const i1 = keys.indexOf(id), i2 = keys.indexOf(targetId);
+    const newObj = {};
+    keys.forEach((k, i) => {
+      if (i === i1) newObj[targetId] = window.categories[targetId];
+      else if (i === i2) newObj[id] = window.categories[id];
+      else newObj[k] = window.categories[k];
+    });
+    window.categories = newObj;
+    window.save();
+    window.renderCatsList();
+    window.render();
+  };
+
   window.renderCatsList = function() {
     const box = $('catsList');
     const expenseEntries = Object.entries(window.categories).filter(([, c]) => c.type === 'expense');
     const incomeEntries = Object.entries(window.categories).filter(([, c]) => c.type === 'income');
-    const renderRow = ([id, c]) => `<div class="cat-row"><div class="item-icon">${c.emoji}</div><div class="name">${window.escapeHtml(c.name)}</div><button class="icon-btn" onclick="openCatEditor('${id}')">✏️</button><button class="icon-btn" onclick="deleteCategory('${id}')">🗑️</button></div>`;
+    const renderRow = ([id, c]) => {
+      const sameType = Object.keys(window.categories).filter(k => window.categories[k].type === c.type);
+      const pos = sameType.indexOf(id);
+      const canUp = pos > 0, canDown = pos < sameType.length - 1;
+      return `<div class="cat-row">
+        <div class="item-icon">${c.emoji}</div>
+        <div class="name">${window.escapeHtml(c.name)}</div>
+        <button class="icon-btn move-btn" onclick="moveCategory('${id}',-1)" ${canUp?'':'disabled'}>▲</button>
+        <button class="icon-btn move-btn" onclick="moveCategory('${id}',1)" ${canDown?'':'disabled'}>▼</button>
+        <button class="icon-btn" onclick="openCatEditor('${id}')">✏️</button>
+        <button class="icon-btn" onclick="deleteCategory('${id}')">🗑️</button>
+      </div>`;
+    };
     box.innerHTML = `<div class="cats-section"><div class="cats-section-head expense"><span class="dot"></span><span>Расходы</span></div><div class="cats-section-list">${expenseEntries.map(renderRow).join('')}</div></div><div class="cats-section"><div class="cats-section-head income"><span class="dot"></span><span>Доходы</span></div><div class="cats-section-list">${incomeEntries.map(renderRow).join('')}</div></div>`;
   };
   window.openCatEditor = function(id = null) {
@@ -889,7 +1070,7 @@ document.addEventListener('DOMContentLoaded', () => {
     $('catEditorTitle').textContent = id ? 'Изменить категорию' : 'Новая категория';
     if (id && window.categories[id]) { $('catName').value = window.categories[id].name; $('catKeywords').value = (window.categories[id].keywords || []).join(', '); window.pickedEmoji = window.categories[id].emoji; $('catType').value = window.categories[id].type || 'expense'; }
     else { $('catName').value = ''; $('catKeywords').value = ''; window.pickedEmoji = '🍔'; $('catType').value = window.currentType; }
-    window.renderEmojiPicker(); window.closeModal('catsModal'); $('catEditorModal').classList.add('show');
+    window.renderEmojiPicker(); window.replaceModal('catsModal', 'catEditorModal');
   };
   window.renderEmojiPicker = function() { $('emojiPicker').innerHTML = EMOJI_CHOICES.map(e => `<span class="${e === window.pickedEmoji ? 'selected' : ''}" onclick="pickEmoji('${e}')">${e}</span>`).join(''); };
   window.pickEmoji = function(e) { window.pickedEmoji = e; $('catEmojiCustom').value = ''; window.renderEmojiPicker(); };
@@ -915,17 +1096,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const expenseCats = Object.entries(window.categories).filter(([, c]) => c.type === 'expense');
     if (!expenseCats.length) box.innerHTML = `<div class="empty">Нет категорий расходов</div>`;
     else box.innerHTML = expenseCats.map(([id, c]) => `<div class="filter-item" style="cursor:default; padding: 10px 12px;"><div class="filter-item-info"><div class="filter-item-icon">${c.emoji}</div><div>${window.escapeHtml(c.name)}</div></div><input type="number" id="limit_${id}" class="limit-input" placeholder="0" value="${c.budget || ''}" min="0" step="1" inputmode="decimal"></div>`).join('');
-    $('limitsModal').classList.add('show');
+    window.showModal('limitsModal');
   };
   window.saveLimits = function() {
     const expenseCats = Object.keys(window.categories).filter(id => window.categories[id].type === 'expense');
     expenseCats.forEach(id => { const val = parseFloat($('limit_' + id).value); window.categories[id].budget = val > 0 ? val : null; });
     window.save(); window.closeModal('limitsModal'); window.render(); window.toast('Лимиты сохранены');
   };
-  window.openExportModal = function() { $('exportChoiceModal').classList.add('show'); };
+  window.openExportModal = function() { window.showModal('exportChoiceModal'); };
   window.exportAsFile = function() { window.closeModal('exportChoiceModal'); window.exportData(); };
   window.exportAsText = function() { window.closeModal('exportChoiceModal'); window.showBackupText(); };
-  window.openImportModal = function() { $('importChoiceModal').classList.add('show'); };
+  window.openImportModal = function() { window.showModal('importChoiceModal'); };
   window.importAsFile = function() { window.closeModal('importChoiceModal'); window.triggerImport(); };
   window.importAsText = function() { window.closeModal('importChoiceModal'); window.showImportTextModal(); };
 
@@ -1036,7 +1217,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return `<div class="stat-row" onclick="window.openCategoryStatsView('${id}')" style="cursor: pointer;"><div class="item-icon">${c.emoji}</div><div class="stat-info"><div class="stat-row-top"><span class="stat-name">${window.escapeHtml(c.name)}</span><span class="stat-amount">${fmt(val)} ₽ · ${pct}%</span></div><div class="stat-bar-bg"><div class="stat-bar-fill" style="width:${pct}%"></div></div></div></div>`;
     }).join('');
   };
-  window.openFixedModal = function() { window.renderFixedList(); $('fixedModal').classList.add('show'); };
+  window.openFixedModal = function() { window.renderFixedList(); window.showModal('fixedModal'); };
   window.renderFixedList = function() {
     const box = $('fixedList');
     if (window.fixedExpenses.length === 0) { box.innerHTML = `<div class="empty"><div class="empty-title">Пока нет платежей</div></div>`; return; }
@@ -1047,7 +1228,7 @@ document.addEventListener('DOMContentLoaded', () => {
     $('fixedCategory').innerHTML = cats.map(([cid, c]) => `<option value="${cid}">${c.emoji} ${c.name}</option>`).join('');
     if (id) { const fx = window.fixedExpenses.find(x => x.id === id); $('fixedName').value = fx.title; $('fixedAmount').value = fx.amount; $('fixedCategory').value = fx.categoryId; $('fixedDate').value = new Date(new Date().getFullYear(), new Date().getMonth(), fx.dayOfMonth).toISOString().split('T')[0]; }
     else { $('fixedName').value = ''; $('fixedAmount').value = ''; $('fixedDate').value = new Date().toISOString().split('T')[0]; }
-    window.closeModal('fixedModal'); $('fixedEditorModal').classList.add('show');
+    window.replaceModal('fixedModal', 'fixedEditorModal');
   };
   window.saveFixed = function() {
     const name = $('fixedName').value.trim(); const amount = parseFloat($('fixedAmount').value);
@@ -1075,7 +1256,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const isActive = !window.hiddenFilters.includes(id);
       return `<div class="filter-item ${isActive ? 'active' : ''}" onclick="toggleFilter('${id}')"><div class="filter-item-info"><div class="filter-item-icon">${c.emoji}</div><div>${c.name}</div></div><div class="checkbox"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div></div>`;
     }).join('');
-    $('filterSettingsModal').classList.add('show');
+    window.showModal('filterSettingsModal');
   };
   window.toggleFilter = function(id) {
     if (window.hiddenFilters.includes(id)) window.hiddenFilters = window.hiddenFilters.filter(x => x !== id);
@@ -1084,14 +1265,124 @@ document.addEventListener('DOMContentLoaded', () => {
     window.save(); window.openFilterSettings(); window.renderFilters(); window.render();
   };
   window.getBackupData = () => ({ exportedAt: new Date().toISOString(), goals: window.goals, categories: window.categories, transactions: window.transactions, hiddenFilters: window.hiddenFilters, fixedExpenses: window.fixedExpenses });
-  window.exportData = function() { const blob = new Blob([JSON.stringify(window.getBackupData(), null, 2)], { type: 'application/json' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'finance.json'; a.click(); window.toast('Скачано'); };
-  window.showBackupText = function() { $('backupTextarea').value = JSON.stringify(window.getBackupData(), null, 2); $('backupModal').classList.add('show'); };
+
+  async function deriveKey(password, salt) {
+    const enc = new TextEncoder();
+    const km = await crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, ['deriveKey']);
+    return crypto.subtle.deriveKey(
+      { name: 'PBKDF2', salt, iterations: 200000, hash: 'SHA-256' },
+      km,
+      { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']
+    );
+  }
+  async function encryptBackup(data, password) {
+    const salt = crypto.getRandomValues(new Uint8Array(16));
+    const iv   = crypto.getRandomValues(new Uint8Array(12));
+    const key  = await deriveKey(password, salt);
+    const ct   = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, new TextEncoder().encode(JSON.stringify(data)));
+    return {
+      format: 'encrypted-finance-backup-v1',
+      salt: btoa(String.fromCharCode(...salt)),
+      iv:   btoa(String.fromCharCode(...iv)),
+      data: btoa(String.fromCharCode(...new Uint8Array(ct)))
+    };
+  }
+  async function decryptBackup(payload, password) {
+    const salt = Uint8Array.from(atob(payload.salt), c => c.charCodeAt(0));
+    const iv   = Uint8Array.from(atob(payload.iv),   c => c.charCodeAt(0));
+    const data = Uint8Array.from(atob(payload.data), c => c.charCodeAt(0));
+    const key  = await deriveKey(password, salt);
+    const pt   = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, data);
+    return JSON.parse(new TextDecoder().decode(pt));
+  }
+  const isEncryptedBackup = obj => obj && obj.format === 'encrypted-finance-backup-v1';
+
+  function askPassword(mode, callback) {
+    $('passwordModalTitle').textContent = mode === 'encrypt' ? 'Пароль для шифрования' : 'Пароль для расшифровки';
+    $('passwordModalHint').textContent = mode === 'encrypt'
+      ? 'Оставьте пустым для незашифрованного бэкапа. Пароль нигде не сохраняется — запишите его!'
+      : 'Введите пароль, которым был зашифрован бэкап.';
+    $('passwordInput').value = '';
+    $('passwordConfirm').value = '';
+    $('passwordConfirm').style.display = mode === 'encrypt' ? 'block' : 'none';
+    $('passwordOkBtn').onclick = () => {
+      const pwd = $('passwordInput').value;
+      if (mode === 'encrypt') {
+        if (pwd && pwd !== $('passwordConfirm').value) { window.toast('Пароли не совпадают'); return; }
+        window.closeModal('passwordModal'); callback(pwd);
+      } else {
+        if (!pwd) { window.toast('Введите пароль'); return; }
+        window.closeModal('passwordModal'); callback(pwd);
+      }
+    };
+    window.showModal('passwordModal');
+    setTimeout(() => $('passwordInput').focus(), 320);
+  }
+
+  window.exportData = function() {
+    askPassword('encrypt', async (password) => {
+      try {
+        const data = window.getBackupData();
+        const content = password ? await encryptBackup(data, password) : data;
+        const blob = new Blob([JSON.stringify(content, null, 2)], { type: 'application/json' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = password ? 'finance.encrypted.json' : 'finance.json';
+        a.click();
+        window.toast(password ? 'Зашифровано и скачано 🔒' : 'Скачано');
+      } catch (e) { console.error(e); window.toast('Ошибка экспорта'); }
+    });
+  };
+  window.showBackupText = function() {
+    askPassword('encrypt', async (password) => {
+      try {
+        const data = window.getBackupData();
+        const content = password ? await encryptBackup(data, password) : data;
+        $('backupTextarea').value = JSON.stringify(content, null, 2);
+        window.showModal('backupModal');
+      } catch (e) { console.error(e); window.toast('Ошибка'); }
+    });
+  };
   window.copyBackupText = function() { $('backupTextarea').select(); document.execCommand('copy'); window.toast('Скопировано'); };
-  window.showImportTextModal = function() { $('importTextarea').value = ''; $('importTextModal').classList.add('show'); };
-  window.restoreData = function(data) { window.transactions = data.transactions || []; window.categories = data.categories || { ...DEFAULT_CATS }; window.goals = data.goals || [{ id: Date.now(), name: 'Отпуск', target: 200000 }]; window.hiddenFilters = data.hiddenFilters || []; window.fixedExpenses = data.fixedExpenses || []; window.save(); window.render(); window.toast('Загружено'); };
-  window.importFromText = function() { try { const d = JSON.parse($('importTextarea').value); window.askConfirm('Импорт', 'Заменить данные?', 'Да', () => { window.restoreData(d); window.closeModal('importTextModal'); }); } catch { window.toast('Ошибка формата'); } };
+  window.showImportTextModal = function() { $('importTextarea').value = ''; window.showModal('importTextModal'); };
+  window.restoreData = function(data) { window.transactions = data.transactions || []; window.categories = data.categories || JSON.parse(JSON.stringify(DEFAULT_CATS)); window.goals = data.goals || [{ id: Date.now(), name: 'Отпуск', target: 200000 }]; window.hiddenFilters = data.hiddenFilters || []; window.fixedExpenses = data.fixedExpenses || []; window.save(); window.render(); window.toast('Загружено'); };
+
+  function handleImportedData(parsed) {
+    if (isEncryptedBackup(parsed)) {
+      askPassword('decrypt', async (password) => {
+        try {
+          const data = await decryptBackup(parsed, password);
+          window.askConfirm('Импорт', 'Заменить данные?', 'Да', () => {
+            window.restoreData(data);
+            window.closeModal('importTextModal');
+          });
+        } catch (e) { window.toast('Неверный пароль или повреждённый файл'); }
+      });
+    } else {
+      window.askConfirm('Импорт', 'Заменить данные?', 'Да', () => {
+        window.restoreData(parsed);
+        window.closeModal('importTextModal');
+      });
+    }
+  }
+
+  window.importFromText = function() {
+    let parsed;
+    try { parsed = JSON.parse($('importTextarea').value); } catch { window.toast('Ошибка формата'); return; }
+    handleImportedData(parsed);
+  };
   window.triggerImport = function() { $('importFile').click(); };
-  window.handleImport = function(e) { const f = e.target.files[0]; if (!f) return; const r = new FileReader(); r.onload = ev => { try { const d = JSON.parse(ev.target.result); window.askConfirm('Импорт', 'Заменить?', 'Да', () => window.restoreData(d)); } catch { window.toast('Ошибка'); } }; r.readAsText(f); e.target.value = ''; };
+  window.handleImport = function(e) {
+    const f = e.target.files[0]; if (!f) return;
+    const r = new FileReader();
+    r.onload = ev => {
+      let parsed;
+      try { parsed = JSON.parse(ev.target.result); } catch { window.toast('Ошибка формата'); return; }
+      handleImportedData(parsed);
+    };
+    r.readAsText(f);
+    e.target.value = '';
+  };
   window.clearAllData = () => window.askConfirm('Очистить?', 'Все записи удалятся.', 'Да', () => { window.transactions = []; window.save(); window.render(); });
   window.showAIReport = function() {
     if (!window.transactions.length) { window.toast('Нет данных'); return; }
@@ -1102,7 +1393,7 @@ document.addEventListener('DOMContentLoaded', () => {
     Object.entries(g).sort((a,b)=>b[1]-a[1]).forEach(([n, a]) => r += `- ${n}: ${fmt(a)} ₽\n`);
     r += `\nЦЕЛИ:\n`;
     window.goals.forEach(gl => { const s = window.transactions.filter(t => t.goalId === gl.id).reduce((x, t) => x + t.amount, 0); r += `- ${gl.name}: ${fmt(s)} / ${fmt(gl.target)} ₽\n`; });
-    $('aiReportTextarea').value = r; $('aiReportModal').classList.add('show');
+    $('aiReportTextarea').value = r; window.showModal('aiReportModal');
   };
   window.copyAIReport = () => { $('aiReportTextarea').select(); document.execCommand('copy'); window.toast('Скопировано!'); };
 
@@ -1187,7 +1478,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if ('Notification' in window && Notification.permission === 'default') setTimeout(() => Notification.requestPermission(), 5000);
 
-  document.querySelectorAll('.modal-bg').forEach(bg => bg.addEventListener('click', e => { if (e.target === bg) bg.classList.remove('show'); }));
+  document.querySelectorAll('.modal-bg').forEach(bg => bg.addEventListener('click', e => { if (e.target === bg) window.closeModal(bg.id); }));
   $('confirmOk').addEventListener('click', () => { const a = window.confirmAction; window.confirmAction = null; window.closeModal('confirmModal'); if (a) a(); });
   $('title').addEventListener('keydown', e => { if (e.key === 'Enter') window.addTransaction(); });
 
@@ -1197,7 +1488,16 @@ document.addEventListener('DOMContentLoaded', () => {
       let startY = 0, currentY = 0, isDragging = false;
       handle.addEventListener('touchstart', e => { startY = e.touches[0].clientY; isDragging = true; modal.style.transition = 'none'; }, { passive: true });
       handle.addEventListener('touchmove', e => { if (!isDragging) return; const diff = e.touches[0].clientY - startY; if (diff > 0) { if (e.cancelable) e.preventDefault(); currentY = diff; modal.style.transform = `translateY(${diff}px)`; } }, { passive: false });
-      handle.addEventListener('touchend', () => { if (!isDragging) return; isDragging = false; modal.style.transition = ''; if (currentY > 80) { modal.style.transform = ''; modal.closest('.modal-bg').classList.remove('show'); } else modal.style.transform = ''; currentY = 0; });
+      handle.addEventListener('touchend', () => {
+        if (!isDragging) return;
+        isDragging = false;
+        modal.style.transition = '';
+        if (currentY > 80) {
+          modal.style.transform = '';
+          window.closeModal(modal.closest('.modal-bg').id);
+        } else modal.style.transform = '';
+        currentY = 0;
+      });
     });
   }
 
