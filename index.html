@@ -2,437 +2,1666 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#0077FF">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#4f46e5">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.json">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cdefs%3E%3ClinearGradient id='bg' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%236d5cff'/%3E%3Cstop offset='100%25' stop-color='%234f46e5'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='512' height='512' rx='120' fill='url(%23bg)'/%3E%3Ccircle cx='256' cy='256' r='140' fill='none' stroke='rgba(255,255,255,0.2)' stroke-width='40'/%3E%3Cpath d='M256 116 a140 140 0 0 1 0 280' fill='none' stroke='%23ffffff' stroke-width='40' stroke-linecap='round'/%3E%3Ccircle cx='256' cy='256' r='55' fill='%23ffffff'/%3E%3Cpath d='M240 226 h32 M240 246 h32 M256 226 v60' stroke='%234f46e5' stroke-width='12' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+
 <title>Мои финансы</title>
-<link rel="stylesheet" href="styles.css">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+:root { --bg: #f3f4fa; --card: #ffffff; --ink: #10152b; --ink-2: #4a5470; --muted: #8b93a9; --line: #ecedf4; --brand: #4f46e5; --green: #059669; --red: #e11d48; --shadow-card: 0 6px 20px -8px rgba(16,24,40,.12), 0 1px 3px rgba(16,24,40,.04); --nav-bg: rgba(255,255,255,.84); --input-bg: #f7f8fc; --type-switch-bg: #f3f4fa; --seg-bg: #eceef6; --body-gradient: radial-gradient(900px 380px at 50% -160px, #e6e4ff 0%, rgba(230,228,255,0) 70%); }
+[data-theme="dark"] { --bg: #0f111a; --card: #181b26; --ink: #f8fafc; --ink-2: #cbd5e1; --muted: #64748b; --line: #2a2f45; --brand: #6366f1; --green: #10b981; --red: #f43f5e; --shadow-card: 0 6px 20px -8px rgba(0,0,0,.6), 0 1px 3px rgba(0,0,0,.4); --nav-bg: rgba(24,27,38,.84); --input-bg: #232736; --type-switch-bg: #232736; --seg-bg: #232736; --body-gradient: radial-gradient(900px 380px at 50% -160px, #1e1b4b 0%, rgba(30,27,75,0) 70%); }
+body { font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--body-gradient), var(--bg); background-attachment: fixed; color: var(--ink); min-height: 100vh; padding-bottom: calc(118px + env(safe-area-inset-bottom)); -webkit-font-smoothing: antialiased; overflow-x: hidden; transition: background-color 0.3s, color 0.3s; }
+.page { display: none; } .page.active { display: block; animation: pageIn .3s cubic-bezier(.32,.72,0,1); }
+@keyframes pageIn { from { opacity: 0; transform: translateY(10px); } }
+.hero { position: relative; margin: 14px 16px 0; padding: 18px 20px 16px; border-radius: 26px; background: linear-gradient(140deg, #6d5cff 0%, #4f46e5 45%, #6d28d9 100%); color: #fff; overflow: hidden; isolation: isolate; box-shadow: 0 22px 44px -26px rgba(79,70,229,.95), 0 2px 6px rgba(79,70,229,.12); }
+.hero::before, .hero::after { content: ''; position: absolute; border-radius: 50%; pointer-events: none; }
+.hero::before { width: 250px; height: 250px; right: -90px; top: -120px; background: radial-gradient(circle, rgba(255,255,255,.30), rgba(255,255,255,0) 70%); }
+.hero::after { width: 210px; height: 210px; left: -80px; bottom: -130px; background: radial-gradient(circle, rgba(56,189,248,.38), rgba(56,189,248,0) 70%); }
+.hero-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 18px; position: relative; z-index: 1; }
+.brand { font-family: 'Unbounded', sans-serif; font-size: 13.5px; font-weight: 600; letter-spacing: -.3px; }
+.hero-date { font-size: 12px; font-weight: 700; opacity: .78; white-space: nowrap; }
+.hero.slim { padding: 16px 20px 16px; } .hero.slim .hero-top { margin-bottom: 0; } .hero.slim .brand { font-size: 17px; letter-spacing: -.5px; }
+.balance-label { font-size: 10.5px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; opacity: .72; position: relative; z-index: 1; margin-top: 16px; }
+.balance { font-family: 'Unbounded', sans-serif; font-size: clamp(23px, 7.4vw, 31px); font-weight: 700; letter-spacing: -1.2px; line-height: 1.2; margin-top: 6px; position: relative; z-index: 1; font-variant-numeric: tabular-nums; transition: color .3s; }
+.balance small { font-size: .48em; font-weight: 600; opacity: .72; margin-left: 3px; }
+.balance.neg { color: #ffd0d8; }
+.stats { display: flex; gap: 10px; margin-top: 16px; position: relative; z-index: 1; }
+.stat { flex: 1; min-width: 0; background: rgba(255,255,255,.13); border: 1px solid rgba(255,255,255,.17); border-radius: 15px; padding: 9px 12px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+.stat-label { font-size: 10px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; opacity: .75; }
+.stat-val { font-size: 14.5px; font-weight: 800; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-variant-numeric: tabular-nums; }
+.profile-head { display: flex; align-items: center; gap: 14px; margin-top: 18px; position: relative; z-index: 1; }
+.avatar { width: 56px; height: 56px; flex-shrink: 0; border-radius: 50%; background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.28); display: grid; place-items: center; font-size: 26px; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+.profile-name { font-size: 17px; font-weight: 800; letter-spacing: -.3px; }
+.profile-sub { font-size: 12px; font-weight: 600; opacity: .75; margin-top: 2px; }
+.container { max-width: 480px; margin: 0 auto; padding: 14px 16px 0; }
+.card { background: var(--card); border-radius: 22px; padding: 16px; border: 1px solid rgba(15,23,42,.035); box-shadow: var(--shadow-card); margin-bottom: 12px; transition: background-color 0.3s; }
+#list, #statsHistoryList { padding: 16px; overflow: hidden; }
+.add-form { display: flex; flex-direction: column; gap: 11px; }
+.row { display: flex; gap: 10px; }
+input, select, button, textarea { font-family: inherit; font-size: 16px; color: var(--ink); border: 1.5px solid var(--line); border-radius: 14px; padding: 12px 14px; outline: none; background: var(--input-bg); width: 100%; transition: border-color .18s, background .18s, box-shadow .18s; -webkit-appearance: none; appearance: none; }
+input::placeholder { color: var(--muted); font-weight: 500; }
+input:focus, select:focus, textarea:focus { border-color: #a5b4fc; background: var(--card); box-shadow: 0 0 0 4px rgba(99,102,241,.12); }
+#amount { flex: 1; min-width: 0; font-weight: 800; font-size: 19px; letter-spacing: -.4px; font-variant-numeric: tabular-nums; }
+select { flex: 1.15; min-width: 0; background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2394a3b8%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E"); background-repeat: no-repeat; background-position: right 14px center; background-size: 9px; padding-right: 32px; padding-left: 13px; font-weight: 600; font-size: 14px; text-overflow: ellipsis; }
+.type-switch { position: relative; display: grid; grid-template-columns: 1fr 1fr; background: var(--type-switch-bg); border-radius: 16px; padding: 4px; }
+.type-thumb { position: absolute; top: 4px; left: 4px; width: calc(50% - 4px); height: calc(100% - 8px); border-radius: 12px; background: var(--card); box-shadow: 0 2px 8px rgba(16,24,40,.10); transition: transform .3s cubic-bezier(.32,.72,0,1); }
+.type-switch.income .type-thumb { transform: translateX(100%); }
+.type-switch button { position: relative; z-index: 1; border: none; background: transparent; padding: 10px 0; width: auto; font-size: 13.5px; font-weight: 800; color: var(--muted); border-radius: 12px; cursor: pointer; transition: color .2s; }
+.type-switch:not(.income) #btnTypeExp.active { color: var(--red); }
+.type-switch.income #btnTypeInc.active { color: var(--green); }
+button.primary { background: linear-gradient(135deg, #6366f1, #4f46e5); color: #fff; border: none; font-weight: 800; font-size: 15px; letter-spacing: -.2px; padding: 14px; border-radius: 16px; cursor: pointer; box-shadow: 0 12px 26px -14px rgba(79,70,229,.95); transition: transform .15s, filter .15s; }
+button.primary:active { transform: scale(.975); filter: brightness(.94); }
+button.primary.danger { background: linear-gradient(135deg, #fb7185, #e11d48); box-shadow: 0 12px 26px -14px rgba(225,29,72,.95); }
+#submitBtn { margin-top: 3px; }
+#submitBtn.is-exp { background: linear-gradient(135deg, #fb7185, #e11d48); box-shadow: 0 14px 28px -14px rgba(225,29,72,.95); }
+#submitBtn.is-inc { background: linear-gradient(135deg, #34d399, #059669); box-shadow: 0 14px 28px -14px rgba(5,150,105,.95); }
+button.secondary { background: var(--input-bg); color: var(--ink-2); border: 1.5px solid transparent; font-weight: 800; cursor: pointer; transition: transform .15s, background .15s; }
+button.secondary:active { transform: scale(.975); background: var(--line); }
+.budget-row { margin-bottom: 12px; } .budget-row:last-child { margin-bottom: 0; }
+.budget-row-top { display: flex; justify-content: space-between; font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+.budget-row-top .name { color: var(--ink); } .budget-row-top .vals { color: var(--muted); font-variant-numeric: tabular-nums; }
+.budget-bar { height: 7px; background: var(--line); border-radius: 99px; overflow: hidden; }
+.budget-bar-fill { height: 100%; border-radius: 99px; transition: width .3s, background .3s; }
+.limit-input { width: 100px; padding: 8px 10px; font-size: 14px; text-align: right; height: 38px; min-height: 38px; border-radius: 10px; background: var(--card); border-color: var(--line); color: var(--ink); }
+.goals-scroll { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: none; scroll-snap-type: x mandatory; margin-bottom: 12px; }
+.goals-scroll::-webkit-scrollbar { display: none; }
+.goal-card-wrap { flex: 0 0 100%; scroll-snap-align: start; }
+.goals-scroll.multi .goal-card-wrap { flex: 0 0 calc(100% - 28px); }
+.goal-top { display: flex; align-items: center; gap: 14px; }
+.goal-ring { width: 78px; height: 78px; flex-shrink: 0; border-radius: 50%; background: conic-gradient(from -90deg, #8b5cf6 0%, #4f46e5 calc(var(--p, 0) * 1%), var(--line) calc(var(--p, 0) * 1%)); display: grid; place-items: center; transition: background .45s ease; }
+.goal-ring.done { background: conic-gradient(from -90deg, #34d399 0%, #059669 calc(var(--p, 0) * 1%), var(--line) calc(var(--p, 0) * 1%)); }
+.goal-ring-inner { width: 62px; height: 62px; border-radius: 50%; background: var(--card); display: grid; place-items: center; font-size: 13.5px; font-weight: 800; color: var(--brand); letter-spacing: -.4px; box-shadow: inset 0 0 0 1px rgba(15,23,42,.03); }
+.goal-ring.done .goal-ring-inner { color: var(--green); }
+.goal-meta { flex: 1; min-width: 0; }
+.goal-name-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.goal-name-row h3 { font-size: 16px; font-weight: 800; letter-spacing: -.3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.goal-edit { width: 30px; height: 30px; flex-shrink: 0; border-radius: 10px; border: none; background: var(--input-bg); color: var(--ink-2); display: grid; place-items: center; font-size: 13px; cursor: pointer; padding: 0; transition: .15s; }
+.goal-edit:active { transform: scale(.9); background: var(--line); }
+.goal-amounts { display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; font-size: 12.5px; font-weight: 600; color: var(--muted); margin-top: 5px; }
+.goal-amounts strong { font-size: 15px; font-weight: 800; color: var(--ink); font-variant-numeric: tabular-nums; }
+.goal-add-form { display: flex; gap: 8px; margin-top: 14px; }
+.goal-add-form input { flex: 1; min-width: 0; }
+.goal-add-form button { width: auto; flex-shrink: 0; padding: 12px 18px; border-radius: 14px; border: none; background: rgba(99,102,241,.1); color: var(--brand); font-weight: 800; font-size: 13.5px; cursor: pointer; transition: .15s; white-space: nowrap; }
+.goal-add-form button:active { transform: scale(.95); background: rgba(99,102,241,.2); }
+.filters-row { display: flex; align-items: center; gap: 8px; margin: 4px 0 2px; }
+.filters { display: flex; gap: 8px; overflow-x: auto; flex: 1; min-width: 0; padding: 4px 2px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.filters::-webkit-scrollbar { display: none; }
+.chip { padding: 8px 14px; border-radius: 999px; background: var(--card); font-size: 13px; font-weight: 700; white-space: nowrap; border: 1.5px solid var(--line); color: var(--ink-2); cursor: pointer; display: inline-flex; align-items: center; gap: 5px; box-shadow: 0 1px 2px rgba(16,24,40,.04); transition: all .18s ease; font-family: inherit; }
+.chip.active { background: linear-gradient(135deg, #6366f1, #4f46e5); color: #fff; border-color: transparent; box-shadow: 0 8px 18px -8px rgba(79,70,229,.8); }
+.chip:active { transform: scale(.95); }
+.settings-btn { flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%; background: var(--card); border: 1.5px solid var(--line); display: grid; place-items: center; font-size: 16px; cursor: pointer; padding: 0; box-shadow: var(--shadow-card); transition: transform .15s, background .15s; color: var(--ink); }
+.settings-btn:active { transform: scale(.9); background: var(--input-bg); }
+.section-title { display: flex; justify-content: space-between; align-items: center; font-size: 11.5px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: .12em; margin: 20px 4px 10px; }
+.section-title .count { font-size: 11px; background: var(--card); border: 1px solid var(--line); padding: 2px 9px; border-radius: 999px; letter-spacing: 0; color: var(--ink-2); }
+.cat-total { display: none; background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 12px 16px; margin-bottom: 10px; font-size: 13px; font-weight: 700; color: var(--muted); flex-direction: column; align-items: stretch; box-shadow: var(--shadow-card); }
+.cat-total.show { display: flex; }
+.cat-total-val { font-weight: 800; font-size: 16px; color: var(--ink); font-variant-numeric: tabular-nums; }
+.swipe-wrap { position: relative; overflow: hidden; background: var(--card); border-bottom: 1px solid var(--line); }
+.swipe-wrap:last-child { border-bottom: none; }
+.swipe-bg-edit, .swipe-bg-delete { position: absolute; inset: 0; display: none; align-items: center; color: #fff; font-weight: 800; font-size: 15px; z-index: 1; cursor: pointer; }
+.swipe-bg-edit { background: #10b981; padding-left: 24px; justify-content: flex-start; gap: 8px; }
+.swipe-bg-delete { background: #e11d48; padding-right: 24px; justify-content: flex-end; gap: 8px; }
+.swipe-bg-edit:active { filter: brightness(0.9); }
+.swipe-bg-delete:active { filter: brightness(0.9); }
+.bg-text { opacity: 0; transition: opacity 0.1s; white-space: nowrap; } .bg-emoji { font-size: 20px; }
+.list-item { position: relative; z-index: 2; background: var(--card); display: flex; align-items: center; gap: 12px; padding: 11px 0; transform: translateX(0); transition: transform 0.2s ease, background-color 0.3s; touch-action: pan-y; }
+.list-item:first-child { padding-top: 4px; }
+.item-icon { width: 44px; height: 44px; border-radius: 14px; display: grid; place-items: center; font-size: 20px; flex-shrink: 0; background: var(--input-bg); }
+.item-icon.exp { background: rgba(225,29,72,.1); } .item-icon.inc { background: rgba(5,150,105,.1); }
+.item-info { flex: 1; min-width: 0; }
+.item-title { font-weight: 800; font-size: 14.5px; letter-spacing: -.15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--ink); }
+.item-date { font-size: 11.5px; font-weight: 600; color: var(--muted); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.item-amount { font-weight: 800; font-size: 14.5px; white-space: nowrap; letter-spacing: -.2px; font-variant-numeric: tabular-nums; padding-right: 12px; }
+.item-amount.exp { color: var(--red); } .item-amount.inc { color: var(--green); }
+.empty { text-align: center; padding: 26px 10px 22px; }
+.empty-emoji { font-size: 36px; margin-bottom: 8px; opacity: .9; }
+.empty-title { font-size: 15px; font-weight: 800; color: var(--ink-2); }
+.empty-sub { font-size: 13px; color: var(--muted); margin-top: 4px; font-weight: 500; }
+.period-chips { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+.period-chips .chip { flex: 1; justify-content: center; }
+.custom-date-row { display: flex; gap: 8px; align-items: center; margin-bottom: 14px; }
+.custom-date-row input { padding: 10px 12px; font-size: 14px; flex: 1; }
+.seg { display: grid; grid-template-columns: 1fr 1fr; background: var(--seg-bg); border-radius: 16px; padding: 4px; margin-bottom: 6px; }
+.seg button { border: none; background: transparent; padding: 10px; border-radius: 12px; font-weight: 800; font-size: 13.5px; color: var(--muted); cursor: pointer; transition: .2s; }
+.seg button.active { background: var(--card); color: var(--ink); box-shadow: 0 2px 8px rgba(16,24,40,.1); }
+.stat-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.stat-row:first-child { padding-top: 2px; } .stat-row:last-child { border-bottom: none; padding-bottom: 2px; }
+.stat-info { flex: 1; min-width: 0; }
+.stat-row-top { display: flex; justify-content: space-between; gap: 10px; font-size: 13.5px; font-weight: 700; margin-bottom: 7px; }
+.stat-row-top .stat-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--ink); }
+.stat-row-top .stat-amount { color: var(--ink-2); white-space: nowrap; font-variant-numeric: tabular-nums; font-weight: 800; font-size: 13px; }
+.stat-bar-bg { height: 7px; background: var(--line); border-radius: 99px; overflow: hidden; }
+.stat-bar-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, #fb7185, #e11d48); transition: width .45s cubic-bezier(.32,.72,0,1); }
+#statsList.income .stat-bar-fill { background: linear-gradient(90deg, #34d399, #059669); }
+.menu { padding: 6px 8px; }
+.menu-row { display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px; border: none; background: transparent; border-radius: 14px; font-family: inherit; font-size: 14.5px; font-weight: 700; color: var(--ink); cursor: pointer; text-align: left; transition: background .15s; }
+.menu-row:active { background: var(--input-bg); }
+.menu-row + .menu-row { border-top: 1px solid var(--line); }
+.menu-ic { width: 38px; height: 38px; flex-shrink: 0; border-radius: 12px; background: var(--input-bg); display: grid; place-items: center; font-size: 16px; }
+.menu-label { flex: 1; min-width: 0; }
+.menu-arrow { color: var(--muted); font-size: 19px; font-weight: 600; line-height: 1; }
+.menu-row.danger { color: var(--red); } .menu-row.danger .menu-ic { background: rgba(225,29,72,.1); } .menu-row.danger .menu-arrow { color: #fda4b4; }
+.about { text-align: center; font-size: 12px; font-weight: 600; color: var(--muted); margin: 18px 0 8px; }
+.theme-switch { position: relative; width: 50px; height: 28px; flex-shrink: 0; }
+.theme-switch input { opacity: 0; width: 0; height: 0; }
+.theme-slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--line); transition: .4s; border-radius: 34px; }
+.theme-slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+input:checked + .theme-slider { background-color: var(--brand); }
+input:checked + .theme-slider:before { transform: translateX(22px); }
+.bottom-nav { position: fixed; left: 50%; bottom: calc(12px + env(safe-area-inset-bottom)); transform: translateX(-50%); width: calc(100% - 28px); max-width: 452px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; padding: 6px; border-radius: 24px; background: var(--nav-bg); border: 1px solid rgba(15,23,42,.06); box-shadow: 0 18px 44px -16px rgba(16,24,40,.4), 0 2px 8px rgba(16,24,40,.06); backdrop-filter: blur(22px) saturate(180%); -webkit-backdrop-filter: blur(22px) saturate(180%); z-index: 60; transition: background-color 0.3s; }
+.nav-item { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 8px 2px 7px; border: none; background: transparent; border-radius: 18px; font-family: inherit; font-size: 10px; font-weight: 800; color: var(--muted); cursor: pointer; transition: color .2s, background .28s, box-shadow .28s, transform .15s; }
+.nav-item svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform .25s cubic-bezier(.32,.72,0,1); }
+.nav-item.active { color: #fff; background: linear-gradient(135deg, #6366f1, #4f46e5); box-shadow: 0 10px 22px -10px rgba(79,70,229,.95); }
+.nav-item.active svg { transform: scale(1.06); }
+.nav-item:active { transform: scale(.94); }
+.fab { position: fixed; right: max(20px, calc(50% - 224px)); bottom: calc(96px + env(safe-area-inset-bottom)); width: 58px; height: 58px; border-radius: 50%; border: none; background: linear-gradient(135deg, #6d5cff, #4f46e5); color: #fff; display: grid; place-items: center; padding: 0; cursor: pointer; z-index: 55; box-shadow: 0 16px 34px -12px rgba(79,70,229,.95), 0 2px 8px rgba(16,24,40,.18); transition: transform .2s, opacity .22s, box-shadow .2s; }
+.fab svg { width: 26px; height: 26px; fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; transition: transform .3s; }
+.fab:active { transform: scale(.9); box-shadow: 0 8px 18px -8px rgba(79,70,229,.9); }
+.fab:active svg { transform: rotate(90deg); }
+.fab.hidden { opacity: 0; pointer-events: none; transform: scale(.5) translateY(10px); }
+.modal-bg { position: fixed; inset: 0; background: rgba(16,20,40,.5); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); display: flex; align-items: flex-end; justify-content: center; z-index: 100; opacity: 0; visibility: hidden; transition: opacity .25s ease, visibility .25s; }
+.modal-bg.show { opacity: 1; visibility: visible; }
+.modal { width: 100%; max-width: 460px; background: var(--card); border-radius: 26px 26px 0 0; padding: 10px 20px calc(20px + env(safe-area-inset-bottom)); max-height: 92vh; overflow-y: auto; overscroll-behavior: contain; transform: translateY(100%); transition: transform .34s cubic-bezier(.32,.72,0,1); box-shadow: 0 -12px 44px rgba(16,24,40,.22); }
+.modal-bg.show .modal { transform: translateY(0); }
+.modal-handle { width: 100%; padding: 10px 0 16px; margin-top: -10px; display: flex; justify-content: center; cursor: grab; touch-action: none; }
+.modal-handle:active { cursor: grabbing; }
+.modal-handle::after { content: ''; width: 40px; height: 4px; border-radius: 999px; background: var(--line); }
+@media (min-width: 640px) { .modal-bg { align-items: center; padding: 24px; } .modal { border-radius: 24px; padding: 10px 22px 22px; transform: translateY(14px) scale(.97); } .modal-bg.show .modal { transform: translateY(0) scale(1); } .modal-handle { display: none; } }
+.modal h2 { font-size: 18px; font-weight: 800; letter-spacing: -.4px; margin-bottom: 16px; color: var(--ink); }
+.confirm-text { font-size: 14px; line-height: 1.5; font-weight: 500; color: var(--ink-2); margin: -6px 0 18px; }
+.modal-actions { display: flex; gap: 10px; margin-top: 16px; } .modal-actions button { flex: 1; padding: 13px; }
+#backupTextarea, #importTextarea { width: 100%; height: 180px; font-family: monospace; font-size: 11px; resize: none; background: var(--input-bg); border-radius: 14px; padding: 12px; border: 1.5px solid var(--line); outline: none; line-height: 1.4; margin-bottom: 12px; color: var(--ink); }
+.filter-list { display: flex; flex-direction: column; gap: 6px; max-height: 50vh; overflow-y: auto; padding-right: 4px; }
+.filter-item { display: flex; align-items: center; justify-content: space-between; padding: 12px; border-radius: 14px; background: var(--input-bg); border: 1.5px solid transparent; cursor: pointer; transition: .15s; }
+.filter-item:active { background: var(--line); }
+.filter-item-info { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 14.5px; color: var(--ink); }
+.filter-item-icon { width: 36px; height: 36px; border-radius: 10px; background: var(--card); display: grid; place-items: center; font-size: 18px; box-shadow: 0 1px 3px rgba(0,0,0,.05); }
+.checkbox { width: 24px; height: 24px; border-radius: 8px; border: 2px solid var(--line); background: var(--card); display: grid; place-items: center; transition: .2s; }
+.checkbox svg { width: 14px; height: 14px; fill: none; stroke: #fff; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; opacity: 0; transition: .2s; transform: scale(.5); }
+.filter-item.active .checkbox { background: var(--brand); border-color: var(--brand); }
+.filter-item.active .checkbox svg { opacity: 1; transform: scale(1); }
+.cats-section { margin-bottom: 6px; } .cats-section + .cats-section { margin-top: 18px; }
+.cats-section-head { display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 6px; padding: 0 2px; }
+.cats-section-head .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.cats-section-head.expense { color: var(--red); } .cats-section-head.expense .dot { background: var(--red); }
+.cats-section-head.income { color: var(--green); } .cats-section-head.income .dot { background: var(--green); }
+.cats-section-list { background: var(--input-bg); border: 1px solid var(--line); border-radius: 16px; padding: 4px 12px; }
+.cat-row { display: flex; align-items: center; gap: 6px; padding: 9px 0; border-bottom: 1px solid var(--line); }
+.cat-row:last-child { border-bottom: none; }
+.cat-row .item-icon { width: 40px; height: 40px; font-size: 18px; border-radius: 13px; }
+.cat-row .name { flex: 1; min-width: 0; font-weight: 700; font-size: 14.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--ink); }
+.cat-row .move-btn { width: 26px; height: 26px; font-size: 10px; color: var(--muted); }
+.cat-row .move-btn:disabled { opacity: 0.25; pointer-events: none; }
+.icon-btn { width: 32px; height: 32px; flex-shrink: 0; border: none; background: transparent; border-radius: 10px; display: grid; place-items: center; font-size: 15px; cursor: pointer; padding: 0; transition: .15s; }
+.icon-btn:active { background: var(--line); transform: scale(.9); }
+.emoji-picker { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.emoji-picker span { width: 40px; height: 40px; display: grid; place-items: center; font-size: 20px; border-radius: 12px; cursor: pointer; background: var(--input-bg); border: 1.5px solid transparent; transition: .15s; }
+.emoji-picker span.selected { border-color: var(--brand); background: rgba(99,102,241,.1); transform: scale(1.06); }
+.hint { font-size: 12px; font-weight: 700; color: var(--muted); margin-bottom: 2px; }
+.toast { position: fixed; left: 50%; bottom: calc(86px + env(safe-area-inset-bottom)); transform: translate(-50%, 16px); background: var(--ink); color: var(--card); font-size: 13.5px; font-weight: 700; padding: 13px 22px; border-radius: 15px; opacity: 0; pointer-events: none; transition: opacity .25s, transform .25s cubic-bezier(.32,.72,0,1); z-index: 200; box-shadow: 0 16px 34px -12px rgba(16,21,43,.65); max-width: calc(100% - 40px); width: calc(100% - 32px); display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.toast.show { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
+.toast button { background: #fbbf24; color: #000; border: none; padding: 4px 10px; border-radius: 8px; font-weight: 800; font-size: 13px; cursor: pointer; width: auto; margin: 0; }
+#installAppBtn { display: none; background: linear-gradient(135deg, #10b981, #059669); color: #fff; box-shadow: 0 8px 20px -8px rgba(16,185,129,.8); margin-bottom: 12px; }
+#updateBanner { display: none; align-items: center; justify-content: space-between; gap: 12px; background: linear-gradient(135deg, #10b981, #059669); color: #fff; font-weight: 700; font-size: 14px; padding: 14px 16px; border-radius: 16px; margin-bottom: 12px; box-shadow: 0 8px 20px -8px rgba(16,185,129,.6); animation: updateSlide .35s cubic-bezier(.32,.72,0,1); }
+#updateBanner.show { display: flex; }
+#updateBanner button { background: #fff; color: #059669; border: none; border-radius: 10px; padding: 8px 14px; font-weight: 800; font-size: 13px; cursor: pointer; width: auto; flex-shrink: 0; box-shadow: 0 2px 6px rgba(0,0,0,.1); }
+@keyframes updateSlide { from { opacity: 0; transform: translateY(-10px); } }
+</style>
 </head>
 <body>
 
-<!-- MAIN SECTION -->
-<div id="main">
-
-  <!-- ЭКРАН: ГЛАВНОЕ -->
-  <section id="screen-home" class="screen active">
-
-    <!-- HEADER SECTION -->
-    <header class="header">
-      <h1 class="header-title">Мои финансы</h1>
-      <div class="balance-card">
-        <p class="balance-label">Текущий баланс</p>
-        <p class="balance-amount" id="balance-amount">0 ₽</p>
-        <div class="balance-row">
-          <div class="balance-block income">
-            <span class="balance-block-label">Доходы</span>
-            <span class="balance-block-value" id="income-total">+0 ₽</span>
-          </div>
-          <div class="balance-block expense">
-            <span class="balance-block-label">Расходы</span>
-            <span class="balance-block-value" id="expense-total">−0 ₽</span>
-          </div>
-        </div>
+<main id="appMain">
+  <section class="page active" id="page-home">
+    <header class="hero">
+      <div class="hero-top"><div class="brand">Мои финансы</div><div class="hero-date" id="heroDate"></div></div>
+      <div class="balance-label">Текущий баланс</div>
+      <div class="balance" id="balance">0 <small>₽</small></div>
+      <div class="stats">
+        <div class="stat"><div class="stat-label">Доходы</div><div class="stat-val" id="statIncome">+0 ₽</div></div>
+        <div class="stat"><div class="stat-label">Расходы</div><div class="stat-val" id="statExpense">−0 ₽</div></div>
       </div>
     </header>
-    <!-- END HEADER SECTION -->
-
     <div class="container">
-
-      <!-- Баннер обновления -->
-      <div class="update-banner">
-        <p>🎉 Доступно обновление приложения</p>
-        <div class="update-banner-actions">
-          <button class="btn btn-secondary" id="btn-update">Обновить</button>
-          <button class="btn btn-secondary" id="btn-install">📲 Установить приложение</button>
-        </div>
+      <div id="updateBanner">
+        <span>🎉 Доступно обновление приложения</span>
+        <button onclick="applyUpdate()">Обновить</button>
       </div>
-
-      <!-- Быстрое действие: цель -->
-      <button class="btn btn-primary btn-block" id="btn-new-goal-quick">+ Добавить новую цель</button>
-
-      <!-- Бюджеты -->
-      <section class="section">
-        <div class="section-header">
-          <h2>Бюджеты на месяц</h2>
-          <button class="icon-btn" id="btn-limits">⚙️</button>
-        </div>
-        <div id="budgets-list" class="budget-list"><!-- прогресс-бары лимитов --></div>
-      </section>
-
-      <!-- История -->
-      <section class="section">
-        <div class="section-header">
-          <h2>История</h2>
-        </div>
-        <div id="history-list" class="history-list">
-          <div class="empty-state">Пока нет операций. Добавьте первую запись ✨</div>
-        </div>
-      </section>
-
+      <button class="primary" id="installAppBtn" onclick="installPWA()">📲 Установить приложение</button>
+      <div class="goals-scroll" id="goalsList"></div>
+      <button class="secondary" style="width:100%; margin-bottom:12px;" onclick="openGoalModal()">+ Добавить новую цель</button>
+      <div class="card" id="budgetsCard" style="display: none;">
+        <div class="section-title" style="margin-top:0; margin-bottom:12px; padding:0;">Бюджеты на месяц</div>
+        <div id="budgetsList"></div>
+      </div>
+      <div class="filters-row">
+        <div class="filters" id="filters"></div>
+        <button class="settings-btn" onclick="openFilterSettings()">⚙️</button>
+      </div>
+      <div class="section-title"><span>История</span><span class="count" id="historyCount"></span></div>
+      <div class="cat-total" id="catTotal"></div>
+      <div class="card" id="list"></div>
     </div>
   </section>
 
-  <!-- ЭКРАН: СТАТИСТИКА -->
-  <section id="screen-stats" class="screen">
-
-    <!-- HEADER SECTION -->
-    <header class="header">
-      <h1 class="header-title">Статистика</h1>
-      <div class="balance-card">
-        <p class="balance-label">Всё время</p>
-        <div class="balance-row">
-          <div class="balance-block income">
-            <span class="balance-block-label">Доходы</span>
-            <span class="balance-block-value" id="stats-income">+0 ₽</span>
-          </div>
-          <div class="balance-block expense">
-            <span class="balance-block-label">Расходы</span>
-            <span class="balance-block-value" id="stats-expense">−0 ₽</span>
-          </div>
-        </div>
+  <section class="page" id="page-stats">
+    <header class="hero slim">
+      <div class="hero-top"><div class="brand">Статистика</div><div class="hero-date" id="statsPeriodLabel">Всё время</div></div>
+      <div class="stats">
+        <div class="stat"><div class="stat-label">Доходы</div><div class="stat-val" id="statsIncome">+0 ₽</div></div>
+        <div class="stat"><div class="stat-label">Расходы</div><div class="stat-val" id="statsExpense">−0 ₽</div></div>
       </div>
     </header>
-    <!-- END HEADER SECTION -->
-
     <div class="container">
-
-      <!-- Переключатель периода -->
-      <div class="segmented" id="stats-period">
-        <button class="segmented-item active">Всё время</button>
-        <button class="segmented-item">Месяц</button>
-        <button class="segmented-item">Период</button>
+      <div class="period-chips">
+        <button class="chip active" data-period="all" onclick="setStatsPeriod('all')">Всё время</button>
+        <button class="chip" data-period="month" onclick="setStatsPeriod('month')">Месяц</button>
+        <button class="chip" data-period="custom" onclick="setStatsPeriod('custom')">Период</button>
       </div>
-
-      <div id="stats-chart" class="stats-chart">—</div>
-
-      <!-- Детализация по категории -->
-      <div id="category-detail" class="hidden">
-        <button class="btn btn-secondary btn-block" id="btn-back-categories">Назад ко всем категориям</button>
-        <h2 class="category-title" id="category-title">🍔 Еда</h2>
-        <div class="segmented" id="category-type">
-          <button class="segmented-item active">Расходы</button>
-          <button class="segmented-item">Доходы</button>
-        </div>
+      <div class="custom-date-row" id="customDateRow" style="display: none;">
+        <input type="date" id="statsDateFrom" onchange="renderStats()">
+        <span style="color: var(--muted);">—</span>
+        <input type="date" id="statsDateTo" onchange="renderStats()">
       </div>
-
-      <!-- Расходы по категориям -->
-      <section class="section">
-        <div class="section-header">
-          <h2>Расходы по категориям</h2>
-        </div>
-        <div id="categories-list" class="category-list">
-          <div class="empty-state">Нет данных за выбранный период</div>
-        </div>
-      </section>
-
-      <!-- История -->
-      <section class="section">
-        <div class="section-header">
-          <h2>История</h2>
-          <button class="icon-btn" id="btn-history-filter">🔎</button>
-        </div>
-        <div id="stats-history" class="history-list"></div>
-      </section>
-
-    </div>
-  </section>
-
-  <!-- ЭКРАН: ЦЕЛИ -->
-  <section id="screen-goals" class="screen">
-
-    <!-- HEADER SECTION -->
-    <header class="header">
-      <h1 class="header-title">Цели</h1>
-      <div class="balance-card">
-        <p class="balance-progress" id="goals-progress">0%</p>
-        <p class="balance-label">Накоплено на цели</p>
-        <p class="balance-amount" id="goals-total">0 ₽</p>
+      <div id="statsHistoryHeader" style="display: none; margin-bottom: 12px;">
+        <button class="secondary" onclick="closeStatsCategoryView()" style="width: 100%; padding: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          Назад ко всем категориям
+        </button>
+        <div style="font-size: 16px; font-weight: 800; margin-top: 12px;" id="statsCategoryName">🍔 Еда</div>
       </div>
-    </header>
-    <!-- END HEADER SECTION -->
-
-    <div class="container">
-      <div class="section-header">
-        <h2>Мои цели</h2>
-        <button class="btn btn-primary" id="btn-new-goal">+ Добавить новую цель</button>
+      <div class="seg" id="kindSeg">
+        <button class="active" data-kind="expense" onclick="setStatsKind('expense')">Расходы</button>
+        <button data-kind="income" onclick="setStatsKind('income')">Доходы</button>
       </div>
-      <div id="goals-list" class="goals-list">
-        <div class="empty-state">Целей пока нет. Создайте первую 🎯</div>
+      <div id="statsCategoriesView">
+        <div class="section-title"><span id="statsKindTitle">Расходы по категориям</span></div>
+        <div class="card" id="statsList"></div>
+      </div>
+      <div id="statsHistoryView" style="display: none;">
+        <div class="section-title"><span>История</span><span class="count" id="statsHistoryCount"></span></div>
+        <div class="card" id="statsHistoryList"></div>
       </div>
     </div>
   </section>
 
-  <!-- ЭКРАН: ПРОФИЛЬ -->
-  <section id="screen-profile" class="screen">
-
-    <!-- HEADER SECTION -->
-    <header class="header">
-      <div class="profile-avatar">🧑</div>
-      <h1 class="header-title">Мой профиль</h1>
-      <p class="header-subtitle">Данные хранятся на устройстве</p>
+  <section class="page" id="page-goals">
+    <header class="hero slim">
+      <div class="hero-top"><div class="brand">Цели</div><div class="hero-date" id="goalPercentLabel">0%</div></div>
+      <div class="balance-label">Накоплено на цели</div>
+      <div class="balance" id="goalHeroAmount">0 <small>₽</small></div>
     </header>
-    <!-- END HEADER SECTION -->
-
     <div class="container">
-      <section class="section">
-        <div class="section-header"><h2>Настройки</h2></div>
-
-        <div class="settings-list">
-          <button class="settings-item" id="btn-recurring"><span>🔁 Регулярные платежи</span><span class="chevron">›</span></button>
-          <button class="settings-item" id="btn-categories"><span>🏷️ Категории</span><span class="chevron">›</span></button>
-          <button class="settings-item" id="btn-limits-settings"><span>📊 Лимиты на месяц</span><span class="chevron">›</span></button>
-          <button class="settings-item" id="btn-ai-report"><span>🤖 Отчёт для ИИ</span><span class="chevron">›</span></button>
-          <button class="settings-item" id="btn-export"><span>📤 Экспорт данных</span><span class="chevron">›</span></button>
-          <button class="settings-item" id="btn-import"><span>📥 Импорт данных</span><span class="chevron">›</span></button>
-        </div>
-
-        <div class="settings-list">
-          <label class="settings-item settings-toggle">
-            <span>🌙 Тёмная тема</span>
-            <input type="checkbox" id="toggle-dark">
-          </label>
-          <button class="settings-item" id="btn-clear-cache"><span>🔄 Очистить кэш и перезагрузить</span><span class="chevron">›</span></button>
-          <button class="settings-item settings-danger" id="btn-clear-all"><span>🗑️ Очистить все записи</span></button>
-        </div>
-      </section>
-
-      <footer class="app-footer">
-        <p>Мои финансы · v2.1.0</p>
-        <p class="muted">Все данные остаются только у вас</p>
-      </footer>
+      <div class="section-title" style="margin-top:0"><span>Мои цели</span><span class="count" id="goalsCount"></span></div>
+      <div class="card" id="goalsListVertical" style="padding: 0 16px;"></div>
+      <button class="primary" style="margin-top:16px;" onclick="openGoalModal()">+ Добавить новую цель</button>
     </div>
   </section>
 
-</div>
-<!-- END MAIN SECTION -->
+  <section class="page" id="page-profile">
+    <header class="hero slim">
+      <div class="hero-top"><div class="brand">Профиль</div></div>
+      <div class="profile-head">
+        <div class="avatar">🧑</div>
+        <div><div class="profile-name">Мой профиль</div><div class="profile-sub">Данные хранятся на устройстве</div></div>
+      </div>
+    </header>
+    <div class="container">
+      <div class="section-title" style="margin-top:6px"><span>Настройки</span></div>
+      <div class="card menu">
+        <button class="menu-row" onclick="openFixedModal()"><span class="menu-ic">🔁</span><span class="menu-label">Регулярные платежи</span><span class="menu-arrow">›</span></button>
+        <button class="menu-row" onclick="openCatsModal()"><span class="menu-ic">🏷️</span><span class="menu-label">Категории</span><span class="menu-arrow">›</span></button>
+        <button class="menu-row" onclick="openLimitsModal()"><span class="menu-ic">📊</span><span class="menu-label">Лимиты на месяц</span><span class="menu-arrow">›</span></button>
+        <button class="menu-row" onclick="showAIReport()"><span class="menu-ic">🤖</span><span class="menu-label">Отчёт для ИИ</span><span class="menu-arrow">›</span></button>
+        <button class="menu-row" onclick="openExportModal()"><span class="menu-ic">📤</span><span class="menu-label">Экспорт данных</span><span class="menu-arrow">›</span></button>
+        <button class="menu-row" onclick="openImportModal()"><span class="menu-ic">📥</span><span class="menu-label">Импорт данных</span><span class="menu-arrow">›</span></button>
+        <div class="menu-row" style="cursor:default;">
+          <span class="menu-ic">🌙</span><span class="menu-label">Тёмная тема</span>
+          <label class="theme-switch"><input type="checkbox" id="themeToggle" onchange="toggleTheme()"><span class="theme-slider"></span></label>
+        </div>
+        <button class="menu-row" onclick="forceRefresh()">
+          <span class="menu-ic">🔄</span>
+          <span class="menu-label">Очистить кэш и перезагрузить</span>
+          <span class="menu-arrow">›</span>
+        </button>
+        <button class="menu-row danger" onclick="clearAllData()"><span class="menu-ic">🗑️</span><span class="menu-label">Очистить все записи</span><span class="menu-arrow">›</span></button>
+      </div>
+      <div class="about">Мои финансы · v2.1.0<br>Все данные остаются только у вас</div>
+    </div>
+  </section>
+</main>
 
-<!-- NAV SECTION -->
-<nav class="nav" id="bottom-nav">
-  <button class="nav-item active" data-screen="screen-home"><span class="nav-icon">🏠</span><span class="nav-label">Главное</span></button>
-  <button class="nav-item" data-screen="screen-stats"><span class="nav-icon">📊</span><span class="nav-label">Статистика</span></button>
-  <button class="nav-item" data-screen="screen-goals"><span class="nav-icon">🎯</span><span class="nav-label">Цели</span></button>
-  <button class="nav-item" data-screen="screen-profile"><span class="nav-icon">🧑</span><span class="nav-label">Профиль</span></button>
+<input type="file" id="importFile" accept=".json,application/json" style="display: none;" onchange="handleImport(event)">
+<button class="fab" id="fab" onclick="openTxModal()" aria-label="Добавить"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+
+<nav class="bottom-nav" id="bottomNav">
+  <button class="nav-item active" data-tab="home" onclick="switchTab('home')"><svg viewBox="0 0 24 24"><path d="M3.5 11 12 4l8.5 7"/><path d="M5.5 9.8V20h13V9.8"/></svg><span>Главное</span></button>
+  <button class="nav-item" data-tab="stats" onclick="switchTab('stats')"><svg viewBox="0 0 24 24"><path d="M5 20v-7"/><path d="M12 20V6"/><path d="M19 20v-10"/></svg><span>Статистика</span></button>
+  <button class="nav-item" data-tab="goals" onclick="switchTab('goals')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="3.5"/></svg><span>Цели</span></button>
+  <button class="nav-item" data-tab="profile" onclick="switchTab('profile')"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.8"/><path d="M4.8 20c1.3-3.8 3.8-5.6 7.2-5.6s5.9 1.8 7.2 5.6"/></svg><span>Профиль</span></button>
 </nav>
-<!-- END NAV SECTION -->
 
-<!-- Кнопка добавления записи -->
-<button class="fab" id="btn-new-record">+</button>
+<div class="modal-bg" id="txModal"><div class="modal"><div class="modal-handle"></div><h2 id="txModalTitle">Новая запись</h2><div class="add-form">
+  <div class="type-switch" id="typeSwitch"><div class="type-thumb"></div><button class="active" id="btnTypeExp" onclick="setType('expense')">− Расход</button><button id="btnTypeInc" onclick="setType('income')">+ Приход</button></div>
+  <div class="row"><input type="number" id="amount" placeholder="0 ₽" inputmode="decimal" min="0" step="0.01"><select id="category"></select></div>
+  <input type="text" id="title" placeholder="На что потратили? (или +500 для прихода)" maxlength="50">
+  <input type="date" id="txDate" style="color:var(--ink); font-weight:600;">
+  <button class="primary is-exp" id="submitBtn" onclick="addTransaction()">Добавить расход</button>
+</div></div></div>
 
-<!-- Шторка: Новая запись -->
-<div class="modal-overlay hidden" id="modal-record">
-  <div class="modal">
-    <h2 class="modal-title">Новая запись</h2>
-    <div class="segmented" id="record-type">
-      <button class="segmented-item active">− Расход</button>
-      <button class="segmented-item">+ Приход</button>
-    </div>
-    <form id="form-record">
-      <input type="number" class="form-input" placeholder="Сумма" required>
-      <select class="form-input" id="record-category">
-        <option>Еда</option>
-        <option>Другое</option>
-      </select>
-      <input type="text" class="form-input" placeholder="Комментарий">
-      <button type="submit" class="btn btn-primary btn-block">Добавить расход</button>
-    </form>
+<div class="modal-bg" id="goalModal"><div class="modal"><div class="modal-handle"></div><h2 id="goalModalTitle">Новая цель</h2><div class="add-form">
+  <input type="text" id="goalNameInput" placeholder="Название" maxlength="30">
+  <input type="number" id="goalTargetInput" placeholder="Целевая сумма" min="0" inputmode="decimal">
+  <input type="number" id="goalAddAmount" placeholder="Сразу отложить (опционально)" min="0" inputmode="decimal">
+</div><div class="modal-actions"><button class="secondary" onclick="closeModal('goalModal')">Отмена</button><button class="primary" onclick="saveGoal()">Сохранить</button></div></div></div>
+
+<div class="modal-bg" id="catsModal"><div class="modal"><div class="modal-handle"></div><h2>Категории</h2><div id="catsList"></div><button class="secondary" style="margin-top:16px" onclick="openCatEditor()">+ Новая категория</button><div class="modal-actions"><button class="secondary" onclick="closeModal('catsModal')">Готово</button></div></div></div>
+
+<div class="modal-bg" id="catEditorModal"><div class="modal"><div class="modal-handle"></div><h2 id="catEditorTitle">Новая категория</h2><div class="add-form">
+  <input type="text" id="catName" placeholder="Название" maxlength="20">
+  <select id="catType"><option value="expense">Для расходов</option><option value="income">Для доходов</option></select>
+  <input type="text" id="catKeywords" placeholder="Ключевые слова (через запятую)">
+  <div><div class="hint">Выберите иконку</div><div class="emoji-picker" id="emojiPicker"></div></div>
+  <input type="text" id="catEmojiCustom" placeholder="Или свой эмодзи" maxlength="4">
+</div><div class="modal-actions"><button class="secondary" onclick="closeModal('catEditorModal')">Отмена</button><button class="primary" onclick="saveCategory()">Сохранить</button></div></div></div>
+
+<div class="modal-bg" id="limitsModal"><div class="modal"><div class="modal-handle"></div><h2>Лимиты на месяц</h2><p class="confirm-text" style="margin-top:-8px">Укажите лимит для категории. Оставьте пустым, если лимита нет.</p><div class="filter-list" id="limitsList" style="max-height: 60vh;"></div><div class="modal-actions"><button class="primary" onclick="saveLimits()">Сохранить</button></div></div></div>
+
+<div class="modal-bg" id="exportChoiceModal"><div class="modal"><div class="modal-handle"></div><h2>Экспорт данных</h2><div class="menu" style="padding: 0;">
+  <button class="menu-row" onclick="exportAsFile()"><span class="menu-ic">📄</span><span class="menu-label">Скачать JSON файл</span></button>
+  <button class="menu-row" onclick="exportAsText()"><span class="menu-ic">📋</span><span class="menu-label">Копировать как текст</span></button>
+</div><div class="modal-actions"><button class="secondary" onclick="closeModal('exportChoiceModal')">Отмена</button></div></div></div>
+
+<div class="modal-bg" id="importChoiceModal"><div class="modal"><div class="modal-handle"></div><h2>Импорт данных</h2><p class="confirm-text" style="margin-top:-8px; color: var(--red);">Внимание: текущие данные будут заменены!</p><div class="menu" style="padding: 0;">
+  <button class="menu-row" onclick="importAsFile()"><span class="menu-ic">📁</span><span class="menu-label">Выбрать файл (JSON)</span></button>
+  <button class="menu-row" onclick="importAsText()"><span class="menu-ic">📋</span><span class="menu-label">Вставить текст</span></button>
+</div><div class="modal-actions"><button class="secondary" onclick="closeModal('importChoiceModal')">Отмена</button></div></div></div>
+
+<div class="modal-bg" id="fixedModal"><div class="modal"><div class="modal-handle"></div><h2>Регулярные платежи</h2><div id="fixedList"></div><button class="secondary" style="margin-top:16px" onclick="openFixedEditor()">+ Добавить</button><div class="modal-actions"><button class="secondary" onclick="closeModal('fixedModal')">Готово</button></div></div></div>
+
+<div class="modal-bg" id="fixedEditorModal"><div class="modal"><div class="modal-handle"></div><h2 id="fixedEditorTitle">Новый платеж</h2><div class="add-form">
+  <input type="text" id="fixedName" placeholder="Название" maxlength="30">
+  <input type="number" id="fixedAmount" placeholder="Сумма" min="0" step="0.01" inputmode="decimal">
+  <select id="fixedCategory" style="flex: none; width: 100%;"></select>
+  <input type="date" id="fixedDate" style="width: 100%;">
+</div><div class="modal-actions"><button class="secondary" onclick="closeModal('fixedEditorModal')">Отмена</button><button class="primary" onclick="saveFixed()">Сохранить</button></div></div></div>
+
+<div class="modal-bg" id="filterSettingsModal"><div class="modal"><div class="modal-handle"></div><h2>Фильтр истории</h2><div class="filter-list" id="filterSettingsList"></div><div class="modal-actions"><button class="primary" onclick="closeModal('filterSettingsModal')">Готово</button></div></div></div>
+
+<div class="modal-bg" id="aiReportModal"><div class="modal"><div class="modal-handle"></div><h2>Отчёт для ИИ</h2><textarea id="aiReportTextarea" readonly style="width:100%; height:260px; font-family:monospace; font-size:11px; resize:none; background:var(--input-bg); border-radius:14px; padding:12px; border:1.5px solid var(--line); outline:none; margin-bottom:12px; color:var(--ink);"></textarea><button class="primary" onclick="copyAIReport()">📋 Копировать</button><div class="modal-actions"><button class="secondary" onclick="closeModal('aiReportModal')">Закрыть</button></div></div></div>
+
+<div class="modal-bg" id="backupModal"><div class="modal"><div class="modal-handle"></div><h2>Текст бэкапа</h2><textarea id="backupTextarea" readonly></textarea><button class="primary" onclick="copyBackupText()">📋 Копировать</button><div class="modal-actions"><button class="secondary" onclick="closeModal('backupModal')">Закрыть</button></div></div></div>
+
+<div class="modal-bg" id="importTextModal"><div class="modal"><div class="modal-handle"></div><h2>Импорт</h2><textarea id="importTextarea" placeholder="Вставьте JSON..."></textarea><div class="modal-actions"><button class="secondary" onclick="closeModal('importTextModal')">Отмена</button><button class="primary" onclick="importFromText()">Импортировать</button></div></div></div>
+
+<div class="modal-bg" id="confirmModal"><div class="modal"><div class="modal-handle"></div><h2 id="confirmTitle">Удалить?</h2><p class="confirm-text" id="confirmText"></p><div class="modal-actions"><button class="secondary" onclick="closeModal('confirmModal')">Отмена</button><button class="primary danger" id="confirmOk">Удалить</button></div></div></div>
+
+<div class="modal-bg" id="passwordModal"><div class="modal"><div class="modal-handle"></div>
+  <h2 id="passwordModalTitle">Пароль</h2>
+  <p class="confirm-text" id="passwordModalHint" style="margin-top:-8px">Введите пароль для шифрования.</p>
+  <input type="password" id="passwordInput" placeholder="Пароль" autocomplete="new-password" style="margin-bottom:10px;">
+  <input type="password" id="passwordConfirm" placeholder="Повторите пароль" autocomplete="new-password" style="display:none; margin-bottom:10px;">
+  <div class="modal-actions">
+    <button class="secondary" onclick="closeModal('passwordModal')">Отмена</button>
+    <button class="primary" id="passwordOkBtn">Готово</button>
   </div>
-</div>
+</div></div>
 
-<!-- Шторка: Новая цель -->
-<div class="modal-overlay hidden" id="modal-goal">
-  <div class="modal">
-    <h2 class="modal-title">Новая цель</h2>
-    <form id="form-goal">
-      <input type="text" class="form-input" placeholder="Название цели">
-      <input type="number" class="form-input" placeholder="Целевая сумма">
-      <div class="modal-actions">
-        <button type="button" class="btn btn-secondary" data-close>Отмена</button>
-        <button type="submit" class="btn btn-primary">Сохранить</button>
+<div class="toast" id="toast"></div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+  const DEFAULT_CATS = {
+    food:       { emoji: '🛒',  name: 'Продукты',       type: 'expense', budget: null, keywords: ['продукты','магнит','пятёрочка','пятак','чижик','находка','светофор','вкусвилл','хавчик','еда','жрачка','лента','ашан','перекресток','дикси'] },
+    cafe:       { emoji: '🍔',  name: 'Кафе/фастфуд',   type: 'expense', budget: null, keywords: ['мак','кфс','бургер','пекарня','ростикс','вкусно','кофе','обед','кафе','ресторан','пицца','суши','шаурма','завтрак','ужин','перекус','чай','донер','фастфуд','столовая'] },
+    transport:  { emoji: '🚕',  name: 'Транспорт',      type: 'expense', budget: null, keywords: ['такси','метро','автобус','каршеринг','проезд','билет','электричка','самокат','яндекс го','троллейбус','трамвай'] },
+    bensin:     { emoji: '⛽',  name: 'Бензин',          type: 'expense', budget: null, keywords: ['бенз','бензин','заправка','лукоил','тебоил','татнефть','таиф','азс','95','92','100'] },
+    auto:       { emoji: '🚗',  name: 'Авто',            type: 'expense', budget: null, keywords: ['запчасти','ремонт','шинка','шиномонтаж','авто','машина'] },
+    home:       { emoji: '🏠',  name: 'Для дома',        type: 'expense', budget: null, keywords: ['мегастрой','леруа','лерой','стройка','обои','аренда','квартира','жкх','коммуналка','мебель','икеа','дом','быт','химия','бытовуха','посуда'] },
+    credit:     { emoji: '💳',  name: 'Кредиты',         type: 'expense', budget: null, keywords: ['ипотека','займ','кредит'] },
+    gosuslugi:  { emoji: '🏛️', name: 'Госуслуги',       type: 'expense', budget: null, keywords: ['штраф','налог','госпошлина'] },
+    clothes:    { emoji: '👕',  name: 'Одежда',          type: 'expense', budget: null, keywords: ['шмот','обувь','тапки','спортмастер','одежда','кроссовки','кроссы','шмотки','футболка','джинсы'] },
+    internet:   { emoji: '📱',  name: 'Интернет/связь',  type: 'expense', budget: null, keywords: ['домру','таттелеком','мобила','теле2','мтс','мегафон','связь','интернет'] },
+    tobacco:    { emoji: '🚬',  name: 'Табак',           type: 'expense', budget: null, keywords: ['сиги','сишки','сигареты','вейп','айкос','стик','снюс','табак','сих','шихн'] },
+    alcohol:    { emoji: '🍺',  name: 'Алкоголь',        type: 'expense', budget: null, keywords: ['кб','бристоль','пиво','бар','пивас','алкоголь','вино','водка','виски','коньяк','сидр','пивко'] },
+    health:     { emoji: '💊',  name: 'Здоровье',        type: 'expense', budget: null, keywords: ['аптека','врач','таблетки','лекарства','анализы','стоматолог','больница','здоровье'] },
+    insurance:  { emoji: '🛡️', name: 'Страхование',     type: 'expense', budget: null, keywords: ['страховка'] },
+    kids:       { emoji: '👶',  name: 'Для детей',       type: 'expense', budget: null, keywords: ['дм','детский мир','дети','ребенок','детишки','подгузники','памперсы','игрушки'] },
+    sport:      { emoji: '🏋️', name: 'Спорт',           type: 'expense', budget: null, keywords: ['рыбалка','фитнес','спортзал','качалка'] },
+    fun:        { emoji: '🎉',  name: 'Развлечения',     type: 'expense', budget: null, keywords: ['кино','игра','концерт','театр','подписка','нетфликс','развлечения','гулянка'] },
+    shop:       { emoji: '🛍️', name: 'Покупки',         type: 'expense', budget: null, keywords: ['озон','вайлдберриз','маркет','покупки'] },
+    pets:       { emoji: '🐾',  name: 'Питомцы',         type: 'expense', budget: null, keywords: ['корм','ветеринар','зоомагазин','наполнитель','vet'] },
+    beauty:     { emoji: '💅',  name: 'Красота',         type: 'expense', budget: null, keywords: ['салон','стрижка','маникюр','косметика','спа','барбер'] },
+    education:  { emoji: '📚',  name: 'Образование',     type: 'expense', budget: null, keywords: ['курсы','книги','репетитор','обучение','школа'] },
+    investment: { emoji: '📈',  name: 'Инвестиции',      type: 'expense', budget: null, keywords: ['брокер','акции','вклад','инвестиции'] },
+    other:      { emoji: '📦',  name: 'Другое',          type: 'expense', budget: null, keywords: [] },
+    salary:     { emoji: '💼', name: 'Зарплата', type: 'income', budget: null, keywords: ['зарплата','аванс','зп'] },
+    gift:       { emoji: '🎁', name: 'Подарок',  type: 'income', budget: null, keywords: ['подарок','подарили'] },
+    cashback:   { emoji: '💸', name: 'Кэшбэк',   type: 'income', budget: null, keywords: ['кэшбэк','cashback','бонус'] },
+    other_inc:  { emoji: '💰', name: 'Другое',   type: 'income', budget: null, keywords: [] }
+  };
+
+  const V2_IDS = ['food','cafe','transport','bensin','auto','home','credit','gosuslugi','clothes','internet','tobacco','alcohol','health','insurance','kids','sport','fun','shop','other','salary','gift','cashback','other_inc'];
+  const V3_NEW_IDS = ['pets','beauty','education','investment'];
+
+  window.categories = JSON.parse(localStorage.getItem('categories') || 'null') || JSON.parse(JSON.stringify(DEFAULT_CATS));
+  
+  const CATS_VERSION = 4; // Версия 4 для принудительного обновления ключевых слов
+  const currentCatsVersion = parseInt(localStorage.getItem('catsVersion') || '0');
+  if (currentCatsVersion < CATS_VERSION) {
+    if (currentCatsVersion < 2) {
+      if (window.categories.food && window.categories.food.name === 'Еда') {
+        window.categories.food.name = 'Продукты';
+        window.categories.food.emoji = '🛒';
+      }
+      if (window.categories.home && window.categories.home.name === 'Дом') {
+        window.categories.home.name = 'Для дома';
+      }
+      V2_IDS.forEach(id => {
+        if (!window.categories[id] && DEFAULT_CATS[id]) {
+          window.categories[id] = JSON.parse(JSON.stringify(DEFAULT_CATS[id]));
+        }
+      });
+    }
+    if (currentCatsVersion < 3) {
+      const missing = V3_NEW_IDS.filter(id => !window.categories[id]);
+      if (missing.length > 0) {
+        const rebuilt = {};
+        let insertedBeforeOther = false;
+        Object.entries(window.categories).forEach(([id, cat]) => {
+          if (id === 'other' && !insertedBeforeOther) {
+            missing.forEach(nid => { rebuilt[nid] = JSON.parse(JSON.stringify(DEFAULT_CATS[nid])); });
+            insertedBeforeOther = true;
+          }
+          rebuilt[id] = cat;
+        });
+        if (!insertedBeforeOther) {
+          missing.forEach(nid => { rebuilt[nid] = JSON.parse(JSON.stringify(DEFAULT_CATS[nid])); });
+        }
+        window.categories = rebuilt;
+      }
+    }
+    if (currentCatsVersion < 4) {
+      // Обновляем ключевые слова для ВСЕХ существующих категорий (сливаем с новыми)
+      Object.entries(window.categories).forEach(([id, cat]) => {
+        if (DEFAULT_CATS[id] && cat) {
+          const userKw = cat.keywords || [];
+          const defKw = DEFAULT_CATS[id].keywords || [];
+          cat.keywords = [...new Set([...userKw, ...defKw])];
+        }
+      });
+    }
+    localStorage.setItem('catsVersion', CATS_VERSION.toString());
+    localStorage.setItem('categories', JSON.stringify(window.categories));
+  }
+
+  // === SANITIZE DATA ===
+  window.transactions  = JSON.parse(localStorage.getItem('transactions')  || '[]');
+  window.hiddenFilters = JSON.parse(localStorage.getItem('hiddenFilters') || '[]');
+  window.fixedExpenses = JSON.parse(localStorage.getItem('fixedExpenses') || '[]');
+  window.goals         = JSON.parse(localStorage.getItem('goals') || 'null');
+  
+  if (!Array.isArray(window.transactions)) window.transactions = [];
+  if (!Array.isArray(window.hiddenFilters)) window.hiddenFilters = [];
+  if (!Array.isArray(window.fixedExpenses)) window.fixedExpenses = [];
+  if (!Array.isArray(window.goals)) window.goals = [];
+
+  window.transactions = window.transactions.filter(t => t && typeof t === 'object');
+  window.goals = window.goals.filter(g => g && typeof g === 'object');
+  window.fixedExpenses = window.fixedExpenses.filter(fx => fx && typeof fx === 'object');
+  
+  if (typeof window.categories !== 'object' || window.categories === null) window.categories = {};
+  Object.keys(window.categories).forEach(k => {
+    if (!window.categories[k] || typeof window.categories[k] !== 'object') {
+      delete window.categories[k];
+    } else {
+      if (!Array.isArray(window.categories[k].keywords)) window.categories[k].keywords = [];
+    }
+  });
+
+  if (!window.goals.length) {
+    const oldGoal = JSON.parse(localStorage.getItem('goal') || 'null');
+    window.goals = oldGoal ? [{ id: Date.now(), ...oldGoal }] : [{ id: Date.now(), name: 'Отпуск', target: 200000 }];
+    localStorage.removeItem('goal'); localStorage.setItem('goals', JSON.stringify(window.goals));
+  }
+  window.transactions.forEach(t => { if (t.category === 'goal_cat' && !t.goalId) t.goalId = window.goals[0].id; });
+
+  window.save = function() {
+    localStorage.setItem('categories', JSON.stringify(window.categories));
+    localStorage.setItem('transactions', JSON.stringify(window.transactions));
+    localStorage.setItem('goals', JSON.stringify(window.goals));
+    localStorage.setItem('hiddenFilters', JSON.stringify(window.hiddenFilters));
+    localStorage.setItem('fixedExpenses', JSON.stringify(window.fixedExpenses));
+  };
+
+  // === УМНЫЙ ПОИСК КАТЕГОРИИ ПО ОПИСАНИЮ ===
+  window.findCategoryByTitle = function(title, type) {
+    if (!title) return null;
+    const lowerText = title.toLowerCase();
+    let foundCatId = null, bestLen = 0;
+    for (const [id, cat] of Object.entries(window.categories)) {
+      if (!cat || cat.type !== type) continue;
+      const n = cat.name.toLowerCase();
+      if (lowerText.includes(n) && n.length > bestLen) { foundCatId = id; bestLen = n.length; }
+      for (const kw of (cat.keywords || [])) {
+        if (lowerText.includes(kw) && kw.length > bestLen) { foundCatId = id; bestLen = kw.length; }
+      }
+    }
+    return foundCatId;
+  };
+
+  const fallbackExpense = window.categories['other'] ? 'other' : (Object.keys(window.categories).find(k => window.categories[k].type === 'expense') || 'other');
+  const fallbackIncome = window.categories['other_inc'] ? 'other_inc' : (Object.keys(window.categories).find(k => window.categories[k].type === 'income') || 'salary');
+  let orphansFixed = false;
+
+  // 1. Восстанавливаем "осиротевшие" транзакции
+  window.transactions.forEach(t => {
+    if (t.category !== 'goal_cat' && !window.categories[t.category]) {
+      const matchedId = window.findCategoryByTitle(t.title, t.type);
+      t.category = matchedId || (t.type === 'income' ? fallbackIncome : fallbackExpense);
+      orphansFixed = true;
+    }
+  });
+  window.fixedExpenses.forEach(fx => {
+    if (!window.categories[fx.categoryId]) {
+      const matchedId = window.findCategoryByTitle(fx.title, 'expense');
+      fx.categoryId = matchedId || fallbackExpense;
+      orphansFixed = true;
+    }
+  });
+
+  // 2. ПЕРЕСОРТИРОВКА старых транзакций из "Другое"
+  window.transactions.forEach(t => {
+    if (t.category === 'other' || t.category === 'other_inc') {
+      const betterCat = window.findCategoryByTitle(t.title, t.type);
+      if (betterCat && betterCat !== 'other' && betterCat !== 'other_inc') {
+        t.category = betterCat;
+        orphansFixed = true;
+      }
+    }
+  });
+
+  if (orphansFixed) window.save();
+
+  window.activeFilter = 'all';
+  window.currentType = 'expense';
+  window.editingCatId = null;
+  window.editingFixedId = null;
+  window.editingTxId = null;
+  window.editingGoalId = null;
+  window.pickedEmoji = '🍔';
+  window.confirmAction = null;
+  window.statsPeriod = 'all';
+  window.statsKind = 'expense';
+  window.statsCategoryFilter = null;
+  let forcedByPlus = false;
+  let tempDeletedItem = null;
+
+  const EMOJI_CHOICES = ['🍔','🚕','🏠','💊','🎉','🛍️','📦','☕','🍕','🍺','✈️','🎮','📚','🐾','👶','💻','🎵','🚗','⛽','💡','🧾','🎁','💅','🏋️','🚬','💍','🏦','📱','🎬','🌮','💼','💸','💰','💵','🏆','🤑','🎯','🛒','💳','🏛️','👕','🛡️','🍴','📈'];
+
+  const $ = id => document.getElementById(id);
+  const fmt = n => n.toLocaleString('ru-RU', { maximumFractionDigits: 2 });
+
+  const TABS = ['home', 'stats', 'goals', 'profile'];
+  let suppressPopstate = false;
+  history.replaceState({ app: 'home' }, '');
+
+  window.showModal = function(id) {
+    if ($(id).classList.contains('show')) return;
+    $(id).classList.add('show');
+    history.pushState({ modal: id }, '');
+  };
+  
+  window.closeModal = function(id) {
+    if (history.state && history.state.modal === id) {
+      suppressPopstate = true;
+      history.back();
+      setTimeout(() => { suppressPopstate = false; }, 200);
+      const el = $(id);
+      if (el) el.classList.remove('show');
+    } else {
+      const el = $(id);
+      if (el) el.classList.remove('show');
+    }
+  };
+  
+  function internalSwitchTab(tab) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    $('page-' + tab).classList.add('active');
+    document.querySelectorAll('.nav-item').forEach(btn => btn.classList.toggle('active', btn.dataset.tab === tab));
+    $('fab').classList.toggle('hidden', tab === 'profile' || tab === 'goals');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  let lastHomeTap = 0;
+  window.switchTab = tab => {
+    if (tab === 'home' && $('page-home').classList.contains('active')) {
+      const now = Date.now();
+      if (now - lastHomeTap < 300) {
+        if (confirm('Выйти из приложения?')) {
+          window.close();
+          setTimeout(() => { window.location.href = 'about:blank'; }, 100);
+        }
+        lastHomeTap = 0;
+        return;
+      }
+      lastHomeTap = now;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+    if ($('page-' + tab).classList.contains('active')) return;
+    internalSwitchTab(tab);
+    if (tab !== 'home') history.pushState({ tab }, '');
+  };
+
+  function hideStatsCategoryView() {
+    window.statsCategoryFilter = null;
+    $('statsCategoriesView').style.display = 'block';
+    $('statsHistoryHeader').style.display = 'none';
+    $('statsHistoryView').style.display = 'none';
+    $('kindSeg').style.display = 'grid';
+    window.renderStats();
+  }
+  function showStatsCategoryView(catId) {
+    window.statsCategoryFilter = catId;
+    const cat = catId === 'goal_cat' ? { emoji: '🎯', name: 'Цели' } : window.categories[catId];
+    $('statsCategoryName').textContent = `${cat.emoji} ${cat.name}`;
+    $('statsCategoriesView').style.display = 'none';
+    $('statsHistoryHeader').style.display = 'block';
+    $('statsHistoryView').style.display = 'block';
+    $('kindSeg').style.display = 'none';
+    window.renderStats();
+  }
+  window.openCategoryStatsView = function(catId) {
+    showStatsCategoryView(catId);
+    history.pushState({ statsCategory: catId }, '');
+  };
+  window.closeStatsCategoryView = function() {
+    hideStatsCategoryView();
+    if (history.state && history.state.statsCategory) {
+      suppressPopstate = true;
+      history.back();
+      setTimeout(() => { suppressPopstate = false; }, 200);
+    }
+  };
+
+  window.addEventListener('popstate', (e) => {
+    if (suppressPopstate) { suppressPopstate = false; return; }
+    
+    document.querySelectorAll('.modal-bg.show').forEach(m => {
+      if (!e.state || e.state.modal !== m.id) {
+        m.classList.remove('show');
+      }
+    });
+    
+    if (e.state && e.state.modal) {
+      const prevModal = $(e.state.modal);
+      if (prevModal) prevModal.classList.add('show');
+    }
+    
+    if (window.statsCategoryFilter && (!e.state || !e.state.statsCategory)) { 
+      hideStatsCategoryView(); 
+    }
+    
+    if (e.state && e.state.tab) {
+      internalSwitchTab(e.state.tab);
+    } else if (!e.state || (!e.state.modal && !e.state.statsCategory)) {
+      const activeTab = TABS.find(t => $('page-' + t).classList.contains('active'));
+      if (activeTab && activeTab !== 'home') {
+        internalSwitchTab('home');
+      }
+    }
+  });
+
+  function initTheme() {
+    const savedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      $('themeToggle').checked = true;
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0f111a');
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+      $('themeToggle').checked = false;
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#4f46e5');
+    }
+  }
+  window.toggleTheme = function() {
+    const isDark = $('themeToggle').checked;
+    if (isDark) {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      localStorage.setItem('theme', 'dark');
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0f111a');
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+      localStorage.setItem('theme', 'light');
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#4f46e5');
+    }
+  };
+
+  window.escapeHtml = s => { if (!s) return ''; const d = document.createElement('div'); d.textContent = s; return d.innerHTML; };
+  let toastTimer;
+  window.toast = function(msg) { const el = $('toast'); el.innerHTML = msg; el.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove('show'), 3000); };
+  window.askConfirm = (title, text, okLabel, action) => {
+    $('confirmTitle').textContent = title;
+    $('confirmText').textContent = text;
+    $('confirmOk').textContent = okLabel;
+    window.confirmAction = action;
+    window.showModal('confirmModal');
+  };
+
+  function renderListItem(e) {
+    if (!e) return '';
+    const isGoalTx = e.category === 'goal_cat';
+    const cat = isGoalTx ? { emoji: '🎯', name: 'Цель' } : (window.categories[e.category] || { emoji: '📦', name: 'Другое' });
+    const isInc = e.type === 'income';
+    let displayTitle = e.title || '';
+    if (!isGoalTx && displayTitle && typeof displayTitle === 'string') {
+      const cleaned = displayTitle.replace(/\s*\d+(?:[.,]\d{1,2})?\s*₽?\s*$/g, '').trim();
+      if (cleaned) displayTitle = cleaned;
+    }
+    return `<div class="swipe-wrap">
+      <div class="swipe-bg-edit" onclick="handleEditTap(event, ${e.id}, ${isGoalTx})">
+        <span class="bg-emoji">✏️</span><span class="bg-text">Изменить</span>
       </div>
-    </form>
-  </div>
-</div>
+      <div class="swipe-bg-delete" onclick="handleDeleteTap(event, ${e.id})">
+        <span class="bg-text">Удалить</span><span class="bg-emoji">🗑️</span>
+      </div>
+      <div class="list-item swipeable" data-id="${e.id}" data-goal="${isGoalTx}" data-translate="0">
+        <div class="item-icon ${isInc ? 'inc' : 'exp'}">${cat.emoji}</div>
+        <div class="item-info">
+          <div class="item-title">${window.escapeHtml(cat.name)}</div>
+          <div class="item-date">${window.escapeHtml(displayTitle)} · ${window.formatDate(e.date)}</div>
+        </div>
+        <div class="item-amount ${isInc ? 'inc' : 'exp'}">${isInc ? '+' : '−'}${fmt(e.amount)} ₽</div>
+      </div>
+    </div>`;
+  }
 
-<!-- Шторка: Категории -->
-<div class="modal-overlay hidden" id="modal-categories">
-  <div class="modal">
-    <h2 class="modal-title">Категории</h2>
-    <button class="btn btn-secondary btn-block" id="btn-new-category">+ Новая категория</button>
-    <div id="categories-manage" class="category-list"></div>
-    <div class="modal-actions">
-      <button class="btn btn-primary btn-block" data-close>Готово</button>
-    </div>
-  </div>
-</div>
+  let touchStartX = 0, touchStartY = 0;
+  document.addEventListener('touchstart', e => {
+    if (e.target.closest('.modal-bg, .filters, .custom-date-row, input, select, textarea, .goals-scroll, .swipeable')) return;
+    touchStartX = e.changedTouches[0].screenX; touchStartY = e.changedTouches[0].screenY;
+  }, { passive: true });
+  document.addEventListener('touchend', e => {
+    if (e.target.closest('.modal-bg, .filters, .custom-date-row, input, select, textarea, .goals-scroll, .swipeable')) return;
+    const diffX = e.changedTouches[0].screenX - touchStartX;
+    const diffY = e.changedTouches[0].screenY - touchStartY;
+    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 60) {
+      const currentIdx = TABS.findIndex(t => $('page-' + t).classList.contains('active'));
+      if (currentIdx === -1) return;
+      if (diffX < -60 && currentIdx < TABS.length - 1) window.switchTab(TABS[currentIdx + 1]);
+      if (diffX >  60 && currentIdx > 0) window.switchTab(TABS[currentIdx - 1]);
+    }
+  }, { passive: true });
 
-<!-- Шторка: Новая категория -->
-<div class="modal-overlay hidden" id="modal-new-category">
-  <div class="modal">
-    <h2 class="modal-title">Новая категория</h2>
-    <select class="form-input">
-      <option>Расход</option>
-      <option>Доход</option>
-    </select>
-    <input type="text" class="form-input" placeholder="Название категории">
-    <p class="muted">Выберите иконку</p>
-    <div class="icon-picker">
-      <button class="icon-option">🍔</button>
-      <button class="icon-option">🚗</button>
-      <button class="icon-option">🏠</button>
-      <button class="icon-option">🎁</button>
-    </div>
-    <div class="modal-actions">
-      <button type="button" class="btn btn-secondary" data-close>Отмена</button>
-      <button type="submit" class="btn btn-primary">Сохранить</button>
-    </div>
-  </div>
-</div>
+  let openItem = null;
+  let swipeStartX = 0, swipeStartY = 0, swipeCurrentItem = null, currentTranslate = 0;
+  document.addEventListener('touchstart', e => {
+    if (openItem && !e.target.closest('.swipeable') && !e.target.closest('.swipe-bg-delete') && !e.target.closest('.swipe-bg-edit')) {
+      openItem.style.transform = 'translateX(0)';
+      openItem.dataset.translate = '0';
+      openItem.parentNode.querySelectorAll('.bg-text').forEach(el => el.style.opacity = 0);
+      openItem = null;
+    }
+  }, { passive: true });
 
-<!-- Шторка: Лимиты на месяц -->
-<div class="modal-overlay hidden" id="modal-limits">
-  <div class="modal">
-    <h2 class="modal-title">Лимиты на месяц</h2>
-    <p class="muted">Укажите лимит для категории. Оставьте пустым, если лимита нет.</p>
-    <div id="limits-list" class="limits-list"></div>
-    <div class="modal-actions">
-      <button class="btn btn-primary btn-block" data-close>Сохранить</button>
-    </div>
-  </div>
-</div>
+  function setupSwipe(containerId) {
+    const container = $(containerId);
+    if (!container) return;
+    container.addEventListener('touchstart', e => {
+      const item = e.target.closest('.swipeable');
+      if (!item) return;
+      if (openItem && openItem !== item) {
+        openItem.style.transform = 'translateX(0)'; openItem.dataset.translate = '0';
+        openItem.parentNode.querySelectorAll('.bg-text').forEach(el => el.style.opacity = 0);
+        openItem = null;
+      }
+      swipeStartX = e.touches[0].clientX; swipeStartY = e.touches[0].clientY;
+      swipeCurrentItem = item; currentTranslate = parseFloat(item.dataset.translate || 0);
+    }, { passive: true });
+    container.addEventListener('touchmove', e => {
+      if (!swipeCurrentItem) return;
+      const deltaX = e.touches[0].clientX - swipeStartX;
+      const deltaY = e.touches[0].clientY - swipeStartY;
+      if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 10) {
+        swipeCurrentItem.style.transition = 'none';
+        const bgEdit = swipeCurrentItem.parentNode.querySelector('.swipe-bg-edit');
+        const bgDelete = swipeCurrentItem.parentNode.querySelector('.swipe-bg-delete');
+        const txtEdit = bgEdit.querySelector('.bg-text');
+        const txtDelete = bgDelete.querySelector('.bg-text');
+        const isOpened = (openItem === swipeCurrentItem);
+        let newTranslate = currentTranslate + deltaX;
+        if (!isOpened) { if (newTranslate < -80) newTranslate = -80; if (newTranslate > 80) newTranslate = 80; }
+        else { if (newTranslate < -140) newTranslate = -140; if (newTranslate > 140) newTranslate = 140; }
+        swipeCurrentItem.style.transform = `translateX(${newTranslate}px)`;
+        swipeCurrentItem.dataset.translate = newTranslate;
+        if (newTranslate > 0) { bgEdit.style.display = 'flex'; bgDelete.style.display = 'none'; }
+        else if (newTranslate < 0) { bgEdit.style.display = 'none'; bgDelete.style.display = 'flex'; }
+        let absT = Math.abs(newTranslate); let opacity = 0;
+        if (isOpened && absT > 80) opacity = Math.min(1, (absT - 80) / 40);
+        if (newTranslate > 0) txtEdit.style.opacity = opacity; else if (newTranslate < 0) txtDelete.style.opacity = opacity;
+        if (e.cancelable) e.preventDefault();
+      }
+    }, { passive: false });
+    container.addEventListener('touchend', e => {
+      if (!swipeCurrentItem) return;
+      swipeCurrentItem.style.transition = 'transform 0.2s ease';
+      const finalTranslate = parseFloat(swipeCurrentItem.dataset.translate || 0);
+      const id = parseInt(swipeCurrentItem.dataset.id);
+      const isGoal = swipeCurrentItem.dataset.goal === 'true';
+      const isOpened = (openItem === swipeCurrentItem);
+      swipeCurrentItem.dataset.translate = 0;
+      swipeCurrentItem.parentNode.querySelectorAll('.bg-text').forEach(el => el.style.opacity = 0);
+      if (isOpened) {
+        if (finalTranslate <= -100) {
+          swipeCurrentItem.style.transform = 'translateX(0)'; openItem = null;
+          const idx = window.transactions.findIndex(t => t.id === id);
+          tempDeletedItem = window.transactions[idx];
+          window.transactions.splice(idx, 1);
+          window.save(); window.render();
+          window.toast(`Удалено <button onclick="window.undoDelete()">Отменить</button>`);
+        } else if (finalTranslate >= 100) {
+          swipeCurrentItem.style.transform = 'translateX(0)'; openItem = null;
+          if (!isGoal) window.openTxModal(id); else window.toast('Цель нельзя редактировать');
+        } else {
+          if (finalTranslate > -40 && finalTranslate < 40) { swipeCurrentItem.style.transform = 'translateX(0)'; openItem = null; }
+          else { const snapPos = finalTranslate < 0 ? -80 : 80; swipeCurrentItem.style.transform = `translateX(${snapPos}px)`; swipeCurrentItem.dataset.translate = snapPos; }
+        }
+      } else {
+        if (finalTranslate <= -40) { swipeCurrentItem.style.transform = 'translateX(-80px)'; swipeCurrentItem.dataset.translate = -80; openItem = swipeCurrentItem; }
+        else if (finalTranslate >= 40) { swipeCurrentItem.style.transform = 'translateX(80px)'; swipeCurrentItem.dataset.translate = 80; openItem = swipeCurrentItem; }
+        else { swipeCurrentItem.style.transform = 'translateX(0)'; openItem = null; }
+      }
+      swipeCurrentItem = null;
+    });
+  }
+  setupSwipe('list'); setupSwipe('statsHistoryList');
 
-<!-- Шторка: Экспорт данных -->
-<div class="modal-overlay hidden" id="modal-export">
-  <div class="modal">
-    <h2 class="modal-title">Экспорт данных</h2>
-    <button class="btn btn-primary btn-block">📄 Скачать JSON файл</button>
-    <button class="btn btn-secondary btn-block">📋 Копировать как текст</button>
-    <div class="modal-actions">
-      <button class="btn btn-primary btn-block" data-close>Отмена</button>
-    </div>
-  </div>
-</div>
+  window.handleDeleteTap = function (event, id) {
+    event.stopPropagation();
+    const wrap = event.currentTarget.closest('.swipe-wrap');
+    if (!wrap) return;
+    const listItem = wrap.querySelector('.swipeable');
+    if (!listItem || openItem !== listItem) return;
+    const idx = window.transactions.findIndex(t => t.id === id);
+    if (idx === -1) return;
+    listItem.style.transform = 'translateX(0)';
+    listItem.dataset.translate = '0';
+    openItem = null;
+    wrap.querySelectorAll('.bg-text').forEach(el => el.style.opacity = 0);
+    tempDeletedItem = window.transactions[idx];
+    window.transactions.splice(idx, 1);
+    window.save(); window.render();
+    window.toast(`Удалено <button onclick="window.undoDelete()">Отменить</button>`);
+  };
+  window.handleEditTap = function (event, id, isGoal) {
+    event.stopPropagation();
+    const wrap = event.currentTarget.closest('.swipe-wrap');
+    if (!wrap) return;
+    const listItem = wrap.querySelector('.swipeable');
+    if (!listItem || openItem !== listItem) return;
+    listItem.style.transform = 'translateX(0)';
+    listItem.dataset.translate = '0';
+    openItem = null;
+    wrap.querySelectorAll('.bg-text').forEach(el => el.style.opacity = 0);
+    if (isGoal) { window.toast('Цель нельзя редактировать'); return; }
+    window.openTxModal(id);
+  };
+  window.undoDelete = function() {
+    if (tempDeletedItem) { window.transactions.unshift(tempDeletedItem); window.save(); window.render(); tempDeletedItem = null; window.toast('Восстановлено'); }
+  };
 
-<!-- Шторка: Импорт данных -->
-<div class="modal-overlay hidden" id="modal-import">
-  <div class="modal">
-    <h2 class="modal-title">Импорт данных</h2>
-    <p class="warning">Внимание: текущие данные будут заменены!</p>
-    <button class="btn btn-primary btn-block">📁 Выбрать файл (JSON)</button>
-    <button class="btn btn-secondary btn-block">📋 Вставить текст</button>
-    <div class="modal-actions">
-      <button class="btn btn-primary btn-block" data-close>Отмена</button>
-    </div>
-  </div>
-</div>
+  window.openTxModal = function(id = null) {
+    window.editingTxId = id; forcedByPlus = false;
+    const isEdit = id !== null;
+    $('txModalTitle').textContent = isEdit ? 'Редактировать запись' : 'Новая запись';
+    if (isEdit) {
+      const t = window.transactions.find(x => x.id === id);
+      $('amount').value = t.amount; $('title').value = t.title;
+      $('txDate').value = new Date(t.date).toISOString().split('T')[0];
+      window.setType(t.type); $('category').value = t.category;
+    } else {
+      $('amount').value = ''; $('title').value = '';
+      $('txDate').value = new Date().toISOString().split('T')[0];
+      window.setType('expense');
+    }
+    window.showModal('txModal');
+    setTimeout(() => $('title').focus(), 320);
+  };
+  window.setType = function(type) {
+    window.currentType = type;
+    const sw = $('typeSwitch'); sw.classList.toggle('income', type === 'income');
+    $('btnTypeExp').classList.toggle('active', type === 'expense');
+    $('btnTypeInc').classList.toggle('active', type === 'income');
+    const btn = $('submitBtn');
+    btn.classList.toggle('is-exp', type === 'expense'); btn.classList.toggle('is-inc', type === 'income');
+    btn.textContent = type === 'expense' ? 'Сохранить расход' : 'Сохранить приход';
+    $('title').placeholder = type === 'expense' ? 'На что потратили? (или +500 для прихода)' : 'Откуда пришли деньги?';
+    window.renderCategorySelect();
+  };
 
-<!-- Шторка: Регулярные платежи -->
-<div class="modal-overlay hidden" id="modal-recurring">
-  <div class="modal">
-    <h2 class="modal-title">Регулярные платежи</h2>
-    <button class="btn btn-secondary btn-block" id="btn-new-recurring">+ Добавить</button>
-    <div id="recurring-list" class="recurring-list"></div>
-    <div class="modal-actions">
-      <button class="btn btn-primary btn-block" data-close>Готово</button>
-    </div>
-  </div>
-</div>
+  $('category').addEventListener('change', e => {
+    const title = $('title').value.trim();
+    if (!title) return;
+    const catId = e.target.value;
+    const cat = window.categories[catId];
+    if (!cat) return;
+    const cleaned = title.replace(/\d+([.,]\d+)?/g, ' ').replace(/[₽.,!?]/g, ' ').trim().toLowerCase();
+    const stop = ['купил','купила','потратил','потратила','заплатил','заплатила','оплатил','оплатила','на','за','в','из','с','по','и'];
+    const keyword = cleaned.split(/\s+/).find(w => w.length >= 2 && !stop.includes(w));
+    if (!keyword) return;
+    if (!cat.keywords) cat.keywords = [];
+    if (cat.keywords.includes(keyword)) return;
+    cat.keywords.push(keyword);
+    window.save();
+    window.toast(`🔑 «${keyword}» добавлено в ключевые`);
+  });
 
-<!-- Шторка: Новый платеж -->
-<div class="modal-overlay hidden" id="modal-new-recurring">
-  <div class="modal">
-    <h2 class="modal-title">Новый платеж</h2>
-    <input type="text" class="form-input" placeholder="Название">
-    <input type="number" class="form-input" placeholder="Сумма">
-    <select class="form-input">
-      <option>Каждый месяц</option>
-      <option>Каждую неделю</option>
-    </select>
-    <div class="modal-actions">
-      <button type="button" class="btn btn-secondary" data-close>Отмена</button>
-      <button type="submit" class="btn btn-primary">Сохранить</button>
-    </div>
-  </div>
-</div>
+  window.parseSmartInput = function(text) {
+    if (!text) return;
+    const hasPlus = /^\s*\+/.test(text) || /\+\s*\d/.test(text);
+    if (hasPlus) { forcedByPlus = true; if (window.currentType !== 'income') window.setType('income'); }
+    else if (forcedByPlus) { forcedByPlus = false; if (window.currentType !== 'expense') window.setType('expense'); }
+    const cleanText = text.replace(/\+/g, '');
+    const lowerText = cleanText.toLowerCase();
+    const amountRegex = /(\d+(?:[.,]\d{1,2})?)\s*₽?$/;
+    const amountMatch = cleanText.match(amountRegex) || cleanText.match(/^\s*(\d+(?:[.,]\d{1,2})?)\s*₽?\s+/);
+    if (amountMatch) $('amount').value = parseFloat(amountMatch[1].replace(',', '.'));
+    const today = new Date();
+    if (lowerText.includes('вчера')) { const y = new Date(today); y.setDate(y.getDate() - 1); $('txDate').value = y.toISOString().split('T')[0]; }
+    else if (lowerText.includes('позавчера')) { const y = new Date(today); y.setDate(y.getDate() - 2); $('txDate').value = y.toISOString().split('T')[0]; }
+    else {
+      const dateMatch = cleanText.match(/(\d{1,2})[./](\d{1,2})(?:[./](\d{2,4}))?/);
+      if (dateMatch) {
+        const d = parseInt(dateMatch[1], 10); const m = parseInt(dateMatch[2], 10) - 1;
+        let y = dateMatch[3] ? parseInt(dateMatch[3], 10) : today.getFullYear();
+        if (y < 100) y += 2000;
+        const parsedD = new Date(y, m, d);
+        if (!isNaN(parsedD.getTime())) $('txDate').value = parsedD.toISOString().split('T')[0];
+      }
+    }
+    let foundCatId = null, bestLen = 0;
+    for (const [id, cat] of Object.entries(window.categories)) {
+      if (!cat) continue;
+      const n = cat.name.toLowerCase();
+      if (lowerText.includes(n) && n.length > bestLen) { foundCatId = id; bestLen = n.length; }
+      for (const kw of (cat.keywords || [])) {
+        if (lowerText.includes(kw) && kw.length > bestLen) { foundCatId = id; bestLen = kw.length; }
+      }
+    }
+    if (foundCatId) {
+      const catObj = window.categories[foundCatId];
+      if (catObj.type !== window.currentType && !forcedByPlus) window.setType(catObj.type);
+      $('category').value = foundCatId;
+    }
+  };
+  $('title').addEventListener('input', e => window.parseSmartInput(e.target.value));
+  $('title').addEventListener('keyup', e => window.parseSmartInput(e.target.value));
+  $('title').addEventListener('blur', e => {
+    let title = e.target.value.trim(); if (!title) return;
+    const cleaned = title.replace(/\+/g, '').replace(/(\d+(?:[.,]\d{1,2})?)\s*₽?$/g, '').replace(/вчера/gi, '').replace(/позавчера/gi, '').replace(/(\d{1,2})[./](\d{1,2})(?:[./](\d{2,4}))?/g, '').replace(/\s+/g, ' ').trim();
+    if (cleaned && cleaned !== title) e.target.value = cleaned.charAt(0).toUpperCase() + cleaned.slice(1);
+    else if (!cleaned) e.target.value = '';
+  });
+  window.addTransaction = function() {
+    window.parseSmartInput($('title').value);
+    let title = $('title').value.trim();
+    const amount = parseFloat($('amount').value);
+    const category = $('category').value;
+    const dateVal = $('txDate').value;
+    title = title.replace(/\+/g, '').replace(/(\d+(?:[.,]\d{1,2})?)\s*₽?$/g, '').replace(/вчера/gi, '').replace(/позавчера/gi, '').replace(/(\d{1,2})[./](\d{1,2})(?:[./](\d{2,4}))?/g, '').replace(/\s+/g, ' ').trim();
+    if (title) title = title.charAt(0).toUpperCase() + title.slice(1);
+    if (!title) { if (window.currentType === 'income') title = 'Доход'; else { window.toast('Введите описание'); return; } }
+    if (!amount || amount <= 0) { window.toast('Введите сумму'); return; }
+    const dateStr = dateVal ? new Date(dateVal + 'T12:00:00').toISOString() : new Date().toISOString();
+    if (window.editingTxId) {
+      const idx = window.transactions.findIndex(x => x.id === window.editingTxId);
+      window.transactions[idx] = { ...window.transactions[idx], title, amount, category, type: window.currentType, date: dateStr };
+    } else {
+      window.transactions.unshift({ id: Date.now(), title, amount, category, type: window.currentType, date: dateStr });
+    }
+    window.save(); window.closeModal('txModal'); window.render();
+    if (window.currentType === 'expense' && window.categories[category] && window.categories[category].budget > 0) window.checkBudgetAlert(category);
+    window.toast(window.editingTxId ? 'Запись обновлена' : 'Добавлено');
+    window.editingTxId = null;
+  };
+  window.checkBudgetAlert = function(catId) {
+    const cat = window.categories[catId]; if (!cat || !cat.budget) return;
+    const now = new Date();
+    const spent = window.transactions.filter(t => t.type === 'expense' && t.category === catId && new Date(t.date).getMonth() === now.getMonth() && new Date(t.date).getFullYear() === now.getFullYear()).reduce((s, t) => s + t.amount, 0);
+    if (spent > cat.budget) {
+      if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+      if ('Notification' in window && Notification.permission === 'granted') new Notification('⚠️ Превышен бюджет!', { body: `Категория "${cat.name}"\nПотрачено: ${fmt(spent)} из ${fmt(cat.budget)} ₽` });
+    } else if (spent > cat.budget * 0.9) { if (navigator.vibrate) navigator.vibrate(100); }
+  };
+  window.deleteTransaction = function(id) {
+    window.askConfirm('Удалить запись?', 'Это действие нельзя отменить.', 'Удалить', () => {
+      window.transactions = window.transactions.filter(e => e.id !== id); window.save(); window.render();
+    });
+  };
 
-<!-- Шторка: Фильтр истории -->
-<div class="modal-overlay hidden" id="modal-filter">
-  <div class="modal">
-    <h2 class="modal-title">Фильтр истории</h2>
-    <select class="form-input">
-      <option>Все категории</option>
-      <option>Еда</option>
-      <option>Транспорт</option>
-    </select>
-    <select class="form-input">
-      <option>Расходы и доходы</option>
-      <option>Только расходы</option>
-      <option>Только доходы</option>
-    </select>
-    <div class="modal-actions">
-      <button class="btn btn-primary btn-block" data-close>Готово</button>
-    </div>
-  </div>
-</div>
+  window.updateGoalUI = function() {
+    const box = $('goalsList'); if (!box) return;
+    if (!window.goals.length) { box.innerHTML = `<div class="empty" style="width:100%; padding:10px; background:var(--card); border-radius:22px; box-shadow:var(--shadow-card); margin-bottom:12px;">Нет целей. Добавьте первую!</div>`; return; }
+    box.classList.toggle('multi', window.goals.length > 1);
+    box.innerHTML = window.goals.map(goal => {
+      if (!goal) return '';
+      const saved = window.transactions.filter(e => e.category === 'goal_cat' && e.goalId === goal.id).reduce((sum, e) => sum + e.amount, 0);
+      const pct = goal.target > 0 ? Math.min(100, (saved / goal.target) * 100) : 0;
+      return `<div class="goal-card-wrap"><div class="card" style="margin-bottom:0;"><div class="goal-top"><div class="goal-ring ${pct >= 100 ? 'done' : ''}" style="--p: ${pct.toFixed(2)}"><div class="goal-ring-inner">${Math.floor(pct)}%</div></div><div class="goal-meta"><div class="goal-name-row"><h3>🎯 ${window.escapeHtml(goal.name)}</h3><button class="goal-edit" onclick="openGoalModal(${goal.id})">✏️</button></div><div class="goal-amounts"><strong>${fmt(saved)} ₽</strong> <span>из ${fmt(goal.target)} ₽</span></div></div></div><div class="goal-add-form"><input type="number" class="goal-add-input" placeholder="Сумма" min="0" step="0.01" inputmode="decimal"><button onclick="addToGoal(this, ${goal.id})">Отложить</button></div></div></div>`;
+    }).join('');
+  };
+  window.renderGoalsPage = function() {
+    const box = $('goalsListVertical'); if (!box) return;
+    $('goalsCount').textContent = window.goals.length || '0';
+    if (!window.goals.length) { box.innerHTML = `<div class="empty"><div class="empty-emoji">🎯</div><div class="empty-title">Нет целей</div><div class="empty-sub">Добавьте свою первую цель</div></div>`; return; }
+    box.innerHTML = window.goals.map(goal => {
+      if (!goal) return '';
+      const gName = goal.name || goal.title || 'Без названия';
+      const gTarget = goal.target || 0;
+      const saved = window.transactions.filter(e => e.category === 'goal_cat' && e.goalId === goal.id).reduce((sum, e) => sum + e.amount, 0);
+      const pct = gTarget > 0 ? Math.min(100, (saved / gTarget) * 100) : 0;
+      const isDone = pct >= 100;
+      return `<div class="list-item" style="padding: 14px 0;"><div class="item-icon" style="background:${isDone ? 'rgba(5,150,105,.1)' : 'rgba(99,102,241,.1)'}; color:${isDone ? 'var(--green)' : 'var(--brand)'};">🎯</div><div class="item-info"><div class="item-title">${window.escapeHtml(gName)}</div><div class="item-date">${fmt(saved)} из ${fmt(gTarget)} ₽ (${Math.floor(pct)}%)</div><div class="budget-bar" style="margin-top:6px;"><div class="budget-bar-fill" style="width:${pct}%; background:${isDone ? 'var(--green)' : 'var(--brand)'}"></div></div></div><button type="button" onclick="deleteGoal(${goal.id})" style="width: 32px; height: 32px; border-radius: 50%; background: var(--input-bg); border: none; color: var(--muted); font-size: 16px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; padding: 0;">✕</button></div>`;
+    }).join('');
+  };
+  window.deleteGoal = function(id) {
+    window.askConfirm('Удалить цель?', 'Цель будет удалена. Накопления останутся в истории.', 'Удалить', () => {
+      window.goals = window.goals.filter(g => g.id !== id);
+      window.transactions.forEach(t => { if (t.goalId === id) { t.goalId = null; t.title = t.title.replace('Отложено на:', 'Расход:'); } });
+      window.save(); window.render(); window.toast('Цель удалена');
+    });
+  };
+  window.addToGoal = function(el, goalId) {
+    const form = el.closest('.goal-add-form'); const input = form.querySelector('input');
+    const amount = parseFloat(input.value);
+    if (!amount || amount <= 0) { window.toast('Введите сумму'); return; }
+    const goalObj = window.goals.find(g => g.id === goalId);
+    window.transactions.unshift({ id: Date.now(), title: 'Отложено на: ' + goalObj.name, amount, category: 'goal_cat', goalId: goalId, type: 'expense', date: new Date().toISOString() });
+    window.save(); input.value = ''; window.render(); window.toast('Отложено 🎯');
+  };
+  window.openGoalModal = function(id = null) {
+    window.editingGoalId = id; const isEdit = id !== null;
+    $('goalModalTitle').textContent = isEdit ? 'Изменить цель' : 'Новая цель';
+    if (isEdit) { const g = window.goals.find(x => x.id === id); if(g) { $('goalNameInput').value = g.name; $('goalTargetInput').value = g.target; } }
+    else { $('goalNameInput').value = ''; $('goalTargetInput').value = ''; }
+    $('goalAddAmount').value = ''; window.showModal('goalModal');
+  };
+  window.saveGoal = function() {
+    const name = $('goalNameInput').value.trim();
+    const target = parseFloat($('goalTargetInput').value);
+    const initial = parseFloat($('goalAddAmount').value);
+    if (!name) { window.toast('Введите название'); return; }
+    if (!target || target <= 0) { window.toast('Введите сумму'); return; }
+    if (window.editingGoalId) { const g = window.goals.find(x => x.id === window.editingGoalId); if(g) { g.name = name; g.target = target; } }
+    else {
+      const newId = Date.now();
+      window.goals.push({ id: newId, name, target });
+      if (initial && initial > 0) window.transactions.unshift({ id: Date.now() + 1, title: 'Отложено на: ' + name, amount: initial, category: 'goal_cat', goalId: newId, type: 'expense', date: new Date().toISOString() });
+    }
+    window.save(); window.closeModal('goalModal'); window.render(); window.toast('Цель сохранена');
+  };
 
-<!-- Шторка: Отчёт для ИИ -->
-<div class="modal-overlay hidden" id="modal-ai-report">
-  <div class="modal">
-    <h2 class="modal-title">Отчёт для ИИ</h2>
-    <pre class="report-text" id="ai-report-text"></pre>
-    <button class="btn btn-primary btn-block">📋 Копировать</button>
-    <div class="modal-actions">
-      <button class="btn btn-secondary btn-block" data-close>Закрыть</button>
-    </div>
-  </div>
-</div>
+  window.renderCategorySelect = function() {
+    const sel = $('category'); if (!sel) return;
+    const current = sel.value;
+    const available = Object.entries(window.categories).filter(([, c]) => c && c.type === window.currentType);
+    sel.innerHTML = available.map(([id, c]) => `<option value="${id}">${c.emoji} ${window.escapeHtml(c.name)}</option>`).join('');
+    if (available.some(([id]) => id === current)) sel.value = current;
+  };
+  window.openCatsModal = function() { window.renderCatsList(); window.showModal('catsModal'); };
 
-<!-- Шторка: Текст бэкапа -->
-<div class="modal-overlay hidden" id="modal-backup">
-  <div class="modal">
-    <h2 class="modal-title">Текст бэкапа</h2>
-    <pre class="report-text" id="backup-text"></pre>
-    <button class="btn btn-primary btn-block">📋 Копировать</button>
-    <div class="modal-actions">
-      <button class="btn btn-secondary btn-block" data-close>Закрыть</button>
-    </div>
-  </div>
-</div>
+  window.moveCategory = function(id, dir) {
+    const cat = window.categories[id];
+    if (!cat) return;
+    const typeKeys = Object.keys(window.categories).filter(k => window.categories[k] && window.categories[k].type === cat.type);
+    const idx = typeKeys.indexOf(id);
+    const newIdx = idx + dir;
+    if (newIdx < 0 || newIdx >= typeKeys.length) return;
+    const targetId = typeKeys[newIdx];
+    const keys = Object.keys(window.categories);
+    const i1 = keys.indexOf(id), i2 = keys.indexOf(targetId);
+    const newObj = {};
+    keys.forEach((k, i) => {
+      if (i === i1) newObj[targetId] = window.categories[targetId];
+      else if (i === i2) newObj[id] = window.categories[id];
+      else newObj[k] = window.categories[k];
+    });
+    window.categories = newObj;
+    window.save();
+    window.renderCatsList();
+    window.render();
+  };
 
-<!-- Шторка: Импорт (подтверждение) -->
-<div class="modal-overlay hidden" id="modal-import-confirm">
-  <div class="modal">
-    <h2 class="modal-title">Импорт</h2>
-    <textarea class="form-input" rows="6" placeholder="Вставьте JSON данных"></textarea>
-    <div class="modal-actions">
-      <button type="button" class="btn btn-secondary" data-close>Отмена</button>
-      <button type="button" class="btn btn-primary">Импортировать</button>
-    </div>
-  </div>
-</div>
+  window.renderCatsList = function() {
+    const box = $('catsList'); if (!box) return;
+    const expenseEntries = Object.entries(window.categories).filter(([, c]) => c && c.type === 'expense');
+    const incomeEntries = Object.entries(window.categories).filter(([, c]) => c && c.type === 'income');
+    const renderRow = ([id, c]) => {
+      const sameType = Object.keys(window.categories).filter(k => window.categories[k] && window.categories[k].type === c.type);
+      const pos = sameType.indexOf(id);
+      const canUp = pos > 0, canDown = pos < sameType.length - 1;
+      return `<div class="cat-row">
+        <div class="item-icon">${c.emoji}</div>
+        <div class="name">${window.escapeHtml(c.name)}</div>
+        <button class="icon-btn move-btn" onclick="moveCategory('${id}',-1)" ${canUp?'':'disabled'}>▲</button>
+        <button class="icon-btn move-btn" onclick="moveCategory('${id}',1)" ${canDown?'':'disabled'}>▼</button>
+        <button class="icon-btn" onclick="openCatEditor('${id}')">✏️</button>
+        <button class="icon-btn" onclick="deleteCategory('${id}')">🗑️</button>
+      </div>`;
+    };
+    box.innerHTML = `<div class="cats-section"><div class="cats-section-head expense"><span class="dot"></span><span>Расходы</span></div><div class="cats-section-list">${expenseEntries.map(renderRow).join('')}</div></div><div class="cats-section"><div class="cats-section-head income"><span class="dot"></span><span>Доходы</span></div><div class="cats-section-list">${incomeEntries.map(renderRow).join('')}</div></div>`;
+  };
+  window.openCatEditor = function(id = null) {
+    window.editingCatId = id;
+    $('catEditorTitle').textContent = id ? 'Изменить категорию' : 'Новая категория';
+    if (id && window.categories[id]) { $('catName').value = window.categories[id].name; $('catKeywords').value = (window.categories[id].keywords || []).join(', '); window.pickedEmoji = window.categories[id].emoji; $('catType').value = window.categories[id].type || 'expense'; }
+    else { $('catName').value = ''; $('catKeywords').value = ''; window.pickedEmoji = '🍔'; $('catType').value = window.currentType; }
+    window.renderEmojiPicker(); 
+    $('catsModal').classList.remove('show');
+    window.showModal('catEditorModal');
+  };
+  window.renderEmojiPicker = function() { $('emojiPicker').innerHTML = EMOJI_CHOICES.map(e => `<span class="${e === window.pickedEmoji ? 'selected' : ''}" onclick="pickEmoji('${e}')">${e}</span>`).join(''); };
+  window.pickEmoji = function(e) { window.pickedEmoji = e; $('catEmojiCustom').value = ''; window.renderEmojiPicker(); };
+  window.saveCategory = function() {
+    const name = $('catName').value.trim(); const custom = $('catEmojiCustom').value.trim();
+    const emoji = custom || window.pickedEmoji; const type = $('catType').value;
+    const kwString = $('catKeywords').value.trim();
+    const keywords = kwString ? kwString.split(',').map(k => k.trim().toLowerCase()).filter(k => k) : [];
+    if (!name) { window.toast('Введите название'); return; }
+    if (window.editingCatId) { const oldBudget = window.categories[window.editingCatId].budget; window.categories[window.editingCatId] = { emoji, name, type, keywords, budget: type === 'expense' ? oldBudget : null }; }
+    else { window.categories['cat_' + Date.now()] = { emoji, name, type, keywords, budget: null }; }
+    window.save(); 
+    window.closeModal('catEditorModal'); 
+    window.renderCatsList(); 
+    window.render(); 
+    window.toast('Сохранено');
+  };
+  window.deleteCategory = function(id) {
+    window.askConfirm(`Удалить "${window.categories[id].name}"?`, 'Записи перейдут в подходящие категории по описанию (или в "Другое").', 'Удалить', () => {
+      const cat = window.categories[id];
+      const fallbackExpense = window.categories['other'] ? 'other' : (Object.keys(window.categories).find(k => window.categories[k].type === 'expense') || 'other');
+      const fallbackIncome = window.categories['other_inc'] ? 'other_inc' : (Object.keys(window.categories).find(k => window.categories[k].type === 'income') || 'salary');
+      const fallbackId = (cat && cat.type === 'income') ? fallbackIncome : fallbackExpense;
+      
+      window.transactions.forEach(t => {
+        if (t.category === id) {
+          const matchedId = window.findCategoryByTitle(t.title, t.type);
+          t.category = matchedId || fallbackId;
+        }
+      });
+      
+      window.fixedExpenses.forEach(fx => {
+        if (fx.categoryId === id) {
+          const matchedId = window.findCategoryByTitle(fx.title, 'expense');
+          fx.categoryId = matchedId || fallbackExpense;
+        }
+      });
 
-<!-- Шторка: Удалить? -->
-<div class="modal-overlay hidden" id="modal-confirm-delete">
-  <div class="modal">
-    <h2 class="modal-title">Удалить?</h2>
-    <div class="modal-actions">
-      <button type="button" class="btn btn-secondary" data-close>Отмена</button>
-      <button type="button" class="btn btn-danger">Удалить</button>
-    </div>
-  </div>
-</div>
+      delete window.categories[id]; 
+      window.hiddenFilters = window.hiddenFilters.filter(x => x !== id);
+      if (window.activeFilter === id) window.activeFilter = 'all';
+      window.save(); 
+      window.renderCatsList(); 
+      window.render();
+      window.toast('Категория удалена');
+    });
+  };
+  window.openLimitsModal = function() {
+    const box = $('limitsList');
+    const expenseCats = Object.entries(window.categories).filter(([, c]) => c && c.type === 'expense');
+    if (!expenseCats.length) box.innerHTML = `<div class="empty">Нет категорий расходов</div>`;
+    else box.innerHTML = expenseCats.map(([id, c]) => `<div class="filter-item" style="cursor:default; padding: 10px 12px;"><div class="filter-item-info"><div class="filter-item-icon">${c.emoji}</div><div>${window.escapeHtml(c.name)}</div></div><input type="number" id="limit_${id}" class="limit-input" placeholder="0" value="${c.budget || ''}" min="0" step="1" inputmode="decimal"></div>`).join('');
+    window.showModal('limitsModal');
+  };
+  window.saveLimits = function() {
+    const expenseCats = Object.keys(window.categories).filter(id => window.categories[id] && window.categories[id].type === 'expense');
+    expenseCats.forEach(id => { const val = parseFloat($('limit_' + id).value); window.categories[id].budget = val > 0 ? val : null; });
+    window.save(); window.closeModal('limitsModal'); window.render(); window.toast('Лимиты сохранены');
+  };
+  window.openExportModal = function() { window.showModal('exportChoiceModal'); };
+  window.exportAsFile = function() { window.closeModal('exportChoiceModal'); window.exportData(); };
+  window.exportAsText = function() { window.closeModal('exportChoiceModal'); window.showBackupText(); };
+  window.openImportModal = function() { window.showModal('importChoiceModal'); };
+  window.importAsFile = function() { window.closeModal('importChoiceModal'); window.triggerImport(); };
+  window.importAsText = function() { window.closeModal('importChoiceModal'); window.showImportTextModal(); };
 
-<!-- Шторка: Пароль -->
-<div class="modal-overlay hidden" id="modal-password">
-  <div class="modal">
-    <h2 class="modal-title">Пароль</h2>
-    <p class="muted">Введите пароль для шифрования.</p>
-    <input type="password" class="form-input" placeholder="Пароль">
-    <div class="modal-actions">
-      <button type="button" class="btn btn-secondary" data-close>Отмена</button>
-      <button type="button" class="btn btn-primary">Готово</button>
-    </div>
-  </div>
-</div>
+  window.renderFilters = function() {
+    const box = $('filters'); if (!box) return;
+    const items = [{ key: 'all', emoji: '📊', name: 'Все' }];
+    if (window.transactions.some(t => t.category === 'goal_cat')) items.push({ key: 'goal_cat', emoji: '🎯', name: 'Цели' });
+    items.push(...Object.entries(window.categories).filter(([id, c]) => c && !window.hiddenFilters.includes(id)).map(([id, c]) => ({ key: id, ...c })));
+    if (window.activeFilter !== 'all' && window.activeFilter !== 'goal_cat' && (!window.categories[window.activeFilter] || window.hiddenFilters.includes(window.activeFilter))) window.activeFilter = 'all';
+    box.innerHTML = items.map(c => `<div class="chip ${window.activeFilter === c.key ? 'active' : ''}" onclick="setFilter('${c.key}')">${c.emoji} ${window.escapeHtml(c.name)}</div>`).join('');
+  };
+  window.setFilter = key => { window.activeFilter = key; window.render(); };
+  window.formatDate = function(iso) {
+    const d = new Date(iso); const today = new Date();
+    const time = d.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+    if (d.toDateString() === today.toDateString()) return `Сегодня, ${time}`;
+    return d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' }) + ', ' + time;
+  };
+  window.renderBudgets = function() {
+    const list = $('budgetsList'); const box = $('budgetsCard'); const now = new Date();
+    if (!list || !box) return;
+    const catsWithBudget = Object.entries(window.categories).filter(([id, c]) => c && c.budget > 0 && c.type === 'expense');
+    if (!catsWithBudget.length) { box.style.display = 'none'; return; }
+    box.style.display = 'block';
+    list.innerHTML = catsWithBudget.map(([id, c]) => {
+      const spent = window.transactions.filter(t => t.type === 'expense' && t.category === id && new Date(t.date).getMonth() === now.getMonth() && new Date(t.date).getFullYear() === now.getFullYear()).reduce((s, t) => s + t.amount, 0);
+      const pct = Math.min(100, (spent / c.budget) * 100);
+      const isDanger = spent > c.budget;
+      const hue = 120 - (120 * pct / 100);
+      const barColor = `hsl(${hue}, 84%, 45%)`;
+      return `<div class="budget-row"><div class="budget-row-top"><span class="name">${c.emoji} ${window.escapeHtml(c.name)}</span><span class="vals" style="color:${isDanger ? 'var(--red)' : 'var(--muted)'};">${fmt(spent)} / ${fmt(c.budget)} ₽</span></div><div class="budget-bar"><div class="budget-bar-fill" style="width:${pct}%; background:${barColor}"></div></div></div>`;
+    }).join('');
+  };
+  
+  window.render = function() {
+    try { window.renderCategorySelect(); } catch(e) { console.error('renderCategorySelect', e); }
+    try { window.renderFilters(); } catch(e) { console.error('renderFilters', e); }
+    try { window.updateGoalUI(); } catch(e) { console.error('updateGoalUI', e); }
+    try { window.renderGoalsPage(); } catch(e) { console.error('renderGoalsPage', e); }
+    try { window.renderBudgets(); } catch(e) { console.error('renderBudgets', e); }
+    
+    const totalIncome = window.transactions.filter(t => t && t.type === 'income').reduce((s, t) => s + t.amount, 0);
+    const totalExpense = window.transactions.filter(t => t && t.type === 'expense').reduce((s, t) => s + t.amount, 0);
+    const totalBalance = totalIncome - totalExpense;
+    const balanceEl = $('balance');
+    if (balanceEl) {
+      balanceEl.innerHTML = fmt(totalBalance) + ' <small>₽</small>';
+      balanceEl.classList.toggle('neg', totalBalance < 0);
+    }
+    if ($('statIncome')) $('statIncome').textContent = '+' + fmt(totalIncome) + ' ₽';
+    if ($('statExpense')) $('statExpense').textContent = '−' + fmt(totalExpense) + ' ₽';
+    
+    let totalSavedGoals = window.transactions.filter(t => t && t.category === 'goal_cat').reduce((s, t) => s + t.amount, 0);
+    if ($('goalHeroAmount')) $('goalHeroAmount').innerHTML = fmt(totalSavedGoals) + ' <small>₽</small>';
+    let totalTarget = window.goals.reduce((s, g) => s + (g ? g.target : 0), 0);
+    if ($('goalPercentLabel')) $('goalPercentLabel').textContent = totalTarget > 0 ? Math.floor((totalSavedGoals / totalTarget) * 100) + '%' : '0%';
+    
+    const filtered = window.activeFilter === 'all' ? window.transactions : window.transactions.filter(e => e.category === window.activeFilter);
+    if ($('historyCount')) $('historyCount').textContent = filtered.length || '';
+    const catTotalBox = $('catTotal');
+    if (catTotalBox) {
+      if (window.activeFilter !== 'all') {
+        const catSumAllTime = filtered.reduce((s, e) => e.type === 'income' ? s + e.amount : s - e.amount, 0);
+        const catObj = window.activeFilter === 'goal_cat' ? { emoji: '🎯', name: 'Цели' } : window.categories[window.activeFilter];
+        let budgetHtml = '';
+        if (catObj && catObj.budget && catObj.type === 'expense') {
+          const now = new Date();
+          const spentMonth = window.transactions.filter(t => t.type === 'expense' && t.category === window.activeFilter && new Date(t.date).getMonth() === now.getMonth() && new Date(t.date).getFullYear() === now.getFullYear()).reduce((s, t) => s + t.amount, 0);
+          const pct = Math.min(100, (spentMonth / catObj.budget) * 100);
+          const inlineColor = `hsl(${120 - (120 * pct / 100)}, 84%, 45%)`;
+          budgetHtml = `<div style="width:100%; margin-top:8px;"><div class="budget-bar"><div class="budget-bar-fill" style="width:${pct}%; background:${inlineColor}"></div></div><div class="budget-text" style="font-size:11px;"><span>В этом месяце: ${fmt(spentMonth)} ₽</span><span>Лимит: ${fmt(catObj.budget)} ₽</span></div></div>`;
+        }
+        catTotalBox.innerHTML = `<div style="display:flex; justify-content:space-between; align-items:center; width:100%;"><span>Итог по категории</span><span class="cat-total-val" style="color:${catSumAllTime > 0 ? 'var(--green)' : catSumAllTime < 0 ? 'var(--red)' : 'var(--ink)'}">${catSumAllTime > 0 ? '+' : ''}${fmt(catSumAllTime)} ₽</span></div>${budgetHtml}`;
+        catTotalBox.classList.add('show');
+      } else catTotalBox.classList.remove('show');
+    }
+    
+    const list = $('list');
+    if (list) {
+      if (filtered.length === 0) list.innerHTML = `<div class="empty"><div class="empty-emoji">🫙</div><div class="empty-title">Пусто</div><div class="empty-sub">Нажмите «+», чтобы добавить</div></div>`;
+      else list.innerHTML = filtered.map(e => renderListItem(e)).join('');
+    }
+    window.renderStats();
+  };
+  
+  window.setStatsPeriod = function(p) { window.statsPeriod = p; document.querySelectorAll('.period-chips .chip').forEach(c => c.classList.toggle('active', c.dataset.period === p)); $('customDateRow').style.display = p === 'custom' ? 'flex' : 'none'; window.renderStats(); };
+  window.setStatsKind = function(k) { window.statsKind = k; document.querySelectorAll('#kindSeg button').forEach(b => b.classList.toggle('active', b.dataset.kind === k)); window.renderStats(); };
+  window.periodFilter = function(t) {
+    if (window.statsPeriod === 'all') return true;
+    const d = new Date(t.date), n = new Date();
+    if (window.statsPeriod === 'month') return d.getMonth() === n.getMonth() && d.getFullYear() === n.getFullYear();
+    if (window.statsPeriod === 'custom') {
+      const from = $('statsDateFrom').value ? new Date($('statsDateFrom').value) : new Date(0);
+      const to = $('statsDateTo').value ? new Date($('statsDateTo').value) : new Date(8640000000000000);
+      from.setHours(0,0,0,0); to.setHours(23,59,59,999);
+      return d >= from && d <= to;
+    }
+    return true;
+  };
+  window.renderStats = function() {
+    const list = window.transactions.filter(window.periodFilter);
+    const income = list.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
+    const expense = list.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
+    if ($('statsIncome')) $('statsIncome').textContent = '+' + fmt(income) + ' ₽';
+    if ($('statsExpense')) $('statsExpense').textContent = '−' + fmt(expense) + ' ₽';
+    if ($('statsPeriodLabel')) $('statsPeriodLabel').textContent = window.statsPeriod === 'all' ? 'Всё время' : (window.statsPeriod === 'month' ? 'Этот месяц' : 'Период');
+    if (window.statsCategoryFilter) {
+      const filteredList = list.filter(t => t.category === window.statsCategoryFilter);
+      if ($('statsHistoryCount')) $('statsHistoryCount').textContent = filteredList.length || '';
+      const box = $('statsHistoryList');
+      if (box) {
+        if (filteredList.length === 0) box.innerHTML = `<div class="empty"><div class="empty-emoji">🫙</div><div class="empty-title">Пусто</div><div class="empty-sub">Нет записей за этот период</div></div>`;
+        else box.innerHTML = filteredList.map(e => renderListItem(e)).join('');
+      }
+      return;
+    }
+    const grouped = {};
+    list.filter(t => t.type === window.statsKind).forEach(t => { grouped[t.category] = (grouped[t.category] || 0) + t.amount; });
+    const entries = Object.entries(grouped).sort((a, b) => b[1] - a[1]);
+    const total = entries.reduce((s, [, v]) => s + v, 0);
+    const box = $('statsList');
+    if (!box) return;
+    box.classList.toggle('income', window.statsKind === 'income');
+    if ($('statsKindTitle')) $('statsKindTitle').textContent = window.statsKind === 'income' ? 'Доходы по категориям' : 'Расходы по категориям';
+    if (!entries.length) { box.innerHTML = `<div class="empty"><div class="empty-emoji">📊</div><div class="empty-title">Нет данных</div></div>`; return; }
+    box.innerHTML = entries.map(([id, val]) => {
+      const c = id === 'goal_cat' ? { emoji: '🎯', name: 'Цель' } : (window.categories[id] || { emoji: '📦', name: 'Другое' });
+      const pct = total ? Math.round((val / total) * 100) : 0;
+      return `<div class="stat-row" onclick="window.openCategoryStatsView('${id}')" style="cursor: pointer;"><div class="item-icon">${c.emoji}</div><div class="stat-info"><div class="stat-row-top"><span class="stat-name">${window.escapeHtml(c.name)}</span><span class="stat-amount">${fmt(val)} ₽ · ${pct}%</span></div><div class="stat-bar-bg"><div class="stat-bar-fill" style="width:${pct}%"></div></div></div></div>`;
+    }).join('');
+  };
+  window.openFixedModal = function() { window.renderFixedList(); window.showModal('fixedModal'); };
+  window.renderFixedList = function() {
+    const box = $('fixedList');
+    if (!box) return;
+    if (window.fixedExpenses.length === 0) { box.innerHTML = `<div class="empty"><div class="empty-title">Пока нет платежей</div></div>`; return; }
+    box.innerHTML = window.fixedExpenses.map(fx => `<div class="cat-row"><div class="item-icon">${window.categories[fx.categoryId]?.emoji || '📦'}</div><div class="name">${window.escapeHtml(fx.title)}<br><span style="font-size:11px; color:var(--muted);">${fx.dayOfMonth}-е число</span></div><div class="item-amount exp">−${fmt(fx.amount)} ₽</div><button class="icon-btn" onclick="openFixedEditor(${fx.id})">✏️</button><button class="icon-btn" onclick="deleteFixed(${fx.id})">🗑️</button></div>`).join('');
+  };
+  window.openFixedEditor = function(id = null) {
+    window.editingFixedId = id; const cats = Object.entries(window.categories).filter(([, c]) => c && c.type === 'expense');
+    $('fixedCategory').innerHTML = cats.map(([cid, c]) => `<option value="${cid}">${c.emoji} ${c.name}</option>`).join('');
+    if (id) { const fx = window.fixedExpenses.find(x => x.id === id); if (fx) { $('fixedName').value = fx.title; $('fixedAmount').value = fx.amount; $('fixedCategory').value = fx.categoryId; $('fixedDate').value = new Date(new Date().getFullYear(), new Date().getMonth(), fx.dayOfMonth).toISOString().split('T')[0]; } }
+    else { $('fixedName').value = ''; $('fixedAmount').value = ''; $('fixedDate').value = new Date().toISOString().split('T')[0]; }
+    $('fixedModal').classList.remove('show');
+    window.showModal('fixedEditorModal');
+  };
+  window.saveFixed = function() {
+    const name = $('fixedName').value.trim(); const amount = parseFloat($('fixedAmount').value);
+    const categoryId = $('fixedCategory').value; const dayOfMonth = new Date($('fixedDate').value).getDate();
+    if (!name || !amount || amount <= 0) { window.toast('Заполните поля'); return; }
+    if (window.editingFixedId) Object.assign(window.fixedExpenses.find(x => x.id === window.editingFixedId), { title: name, amount, categoryId, dayOfMonth });
+    else window.fixedExpenses.push({ id: Date.now(), title: name, amount, categoryId, dayOfMonth, lastCharged: null, type: 'expense' });
+    window.save(); 
+    window.closeModal('fixedEditorModal'); 
+    window.renderFixedList(); 
+    window.render(); 
+    window.toast('Сохранено');
+  };
+  window.deleteFixed = id => window.askConfirm('Удалить?', '', 'Да', () => { window.fixedExpenses = window.fixedExpenses.filter(x => x.id !== id); window.save(); window.renderFixedList(); });
+  window.processFixedExpenses = function() {
+    const now = new Date(); const currentMonth = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
+    let added = 0;
+    window.fixedExpenses.forEach(fx => {
+      if (fx && now.getDate() >= fx.dayOfMonth && fx.lastCharged !== currentMonth) {
+        window.transactions.unshift({ id: Date.now() + Math.random(), title: fx.title + ' (авто)', amount: fx.amount, category: fx.categoryId, type: 'expense', date: new Date(now.getFullYear(), now.getMonth(), fx.dayOfMonth).toISOString() });
+        fx.lastCharged = currentMonth; added++;
+      }
+    });
+    if (added > 0) { window.save(); window.toast(`Добавлено авто-платежей: ${added}`); }
+  };
+  window.openFilterSettings = function() {
+    const box = $('filterSettingsList'); if (!box) return;
+    box.innerHTML = Object.entries(window.categories).filter(([,c]) => c).sort((a,b) => a[1].name.localeCompare(b[1].name)).map(([id, c]) => {
+      const isActive = !window.hiddenFilters.includes(id);
+      return `<div class="filter-item ${isActive ? 'active' : ''}" onclick="toggleFilter('${id}')"><div class="filter-item-info"><div class="filter-item-icon">${c.emoji}</div><div>${c.name}</div></div><div class="checkbox"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div></div>`;
+    }).join('');
+    window.showModal('filterSettingsModal');
+  };
+  window.toggleFilter = function(id) {
+    if (window.hiddenFilters.includes(id)) window.hiddenFilters = window.hiddenFilters.filter(x => x !== id);
+    else window.hiddenFilters.push(id);
+    if (window.hiddenFilters.length === Object.keys(window.categories).length) { window.toast('Оставьте хотя бы одну'); return; }
+    window.save(); window.openFilterSettings(); window.renderFilters(); window.render();
+  };
+  window.getBackupData = () => ({ exportedAt: new Date().toISOString(), goals: window.goals, categories: window.categories, transactions: window.transactions, hiddenFilters: window.hiddenFilters, fixedExpenses: window.fixedExpenses });
 
-<script src="app.js"></script>
+  async function deriveKey(password, salt) {
+    const enc = new TextEncoder();
+    const km = await crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, ['deriveKey']);
+    return crypto.subtle.deriveKey(
+      { name: 'PBKDF2', salt, iterations: 200000, hash: 'SHA-256' },
+      km,
+      { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']
+    );
+  }
+  async function encryptBackup(data, password) {
+    const salt = crypto.getRandomValues(new Uint8Array(16));
+    const iv   = crypto.getRandomValues(new Uint8Array(12));
+    const key  = await deriveKey(password, salt);
+    const ct   = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, new TextEncoder().encode(JSON.stringify(data)));
+    return {
+      format: 'encrypted-finance-backup-v1',
+      salt: btoa(String.fromCharCode(...salt)),
+      iv:   btoa(String.fromCharCode(...iv)),
+      data: btoa(String.fromCharCode(...new Uint8Array(ct)))
+    };
+  }
+  async function decryptBackup(payload, password) {
+    const salt = Uint8Array.from(atob(payload.salt), c => c.charCodeAt(0));
+    const iv   = Uint8Array.from(atob(payload.iv),   c => c.charCodeAt(0));
+    const data = Uint8Array.from(atob(payload.data), c => c.charCodeAt(0));
+    const key  = await deriveKey(password, salt);
+    const pt   = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, data);
+    return JSON.parse(new TextDecoder().decode(pt));
+  }
+  const isEncryptedBackup = obj => obj && obj.format === 'encrypted-finance-backup-v1';
+
+  function askPassword(mode, callback) {
+    $('passwordModalTitle').textContent = mode === 'encrypt' ? 'Пароль для шифрования' : 'Пароль для расшифровки';
+    $('passwordModalHint').textContent = mode === 'encrypt'
+      ? 'Оставьте пустым для незашифрованного бэкапа. Пароль нигде не сохраняется — запишите его!'
+      : 'Введите пароль, которым был зашифрован бэкап.';
+    $('passwordInput').value = '';
+    $('passwordConfirm').value = '';
+    $('passwordConfirm').style.display = mode === 'encrypt' ? 'block' : 'none';
+    $('passwordOkBtn').onclick = () => {
+      const pwd = $('passwordInput').value;
+      if (mode === 'encrypt') {
+        if (pwd && pwd !== $('passwordConfirm').value) { window.toast('Пароли не совпадают'); return; }
+        window.closeModal('passwordModal'); callback(pwd);
+      } else {
+        if (!pwd) { window.toast('Введите пароль'); return; }
+        window.closeModal('passwordModal'); callback(pwd);
+      }
+    };
+    window.showModal('passwordModal');
+    setTimeout(() => $('passwordInput').focus(), 320);
+  }
+
+  window.exportData = function() {
+    askPassword('encrypt', async (password) => {
+      try {
+        const data = window.getBackupData();
+        const content = password ? await encryptBackup(data, password) : data;
+        const blob = new Blob([JSON.stringify(content, null, 2)], { type: 'application/json' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = password ? 'finance.encrypted.json' : 'finance.json';
+        a.click();
+        window.toast(password ? 'Зашифровано и скачано 🔒' : 'Скачано');
+      } catch (e) { console.error(e); window.toast('Ошибка экспорта'); }
+    });
+  };
+  window.showBackupText = function() {
+    askPassword('encrypt', async (password) => {
+      try {
+        const data = window.getBackupData();
+        const content = password ? await encryptBackup(data, password) : data;
+        $('backupTextarea').value = JSON.stringify(content, null, 2);
+        window.showModal('backupModal');
+      } catch (e) { console.error(e); window.toast('Ошибка'); }
+    });
+  };
+  window.copyBackupText = function() { $('backupTextarea').select(); document.execCommand('copy'); window.toast('Скопировано'); };
+  window.showImportTextModal = function() { $('importTextarea').value = ''; window.showModal('importTextModal'); };
+  window.restoreData = function(data) { window.transactions = Array.isArray(data.transactions) ? data.transactions : []; window.categories = (data.categories && typeof data.categories === 'object') ? data.categories : JSON.parse(JSON.stringify(DEFAULT_CATS)); window.goals = Array.isArray(data.goals) ? data.goals : [{ id: Date.now(), name: 'Отпуск', target: 200000 }]; window.hiddenFilters = Array.isArray(data.hiddenFilters) ? data.hiddenFilters : []; window.fixedExpenses = Array.isArray(data.fixedExpenses) ? data.fixedExpenses : []; window.save(); window.render(); window.toast('Загружено'); };
+
+  function handleImportedData(parsed) {
+    if (isEncryptedBackup(parsed)) {
+      askPassword('decrypt', async (password) => {
+        try {
+          const data = await decryptBackup(parsed, password);
+          window.askConfirm('Импорт', 'Заменить данные?', 'Да', () => {
+            window.restoreData(data);
+            window.closeModal('importTextModal');
+          });
+        } catch (e) { window.toast('Неверный пароль или повреждённый файл'); }
+      });
+    } else {
+      window.askConfirm('Импорт', 'Заменить данные?', 'Да', () => {
+        window.restoreData(parsed);
+        window.closeModal('importTextModal');
+      });
+    }
+  }
+
+  window.importFromText = function() {
+    let parsed;
+    try { parsed = JSON.parse($('importTextarea').value); } catch { window.toast('Ошибка формата'); return; }
+    handleImportedData(parsed);
+  };
+  window.triggerImport = function() { $('importFile').click(); };
+  window.handleImport = function(e) {
+    const f = e.target.files[0]; if (!f) return;
+    const r = new FileReader();
+    r.onload = ev => {
+      let parsed;
+      try { parsed = JSON.parse(ev.target.result); } catch { window.toast('Ошибка формата'); return; }
+      handleImportedData(parsed);
+    };
+    r.readAsText(f);
+    e.target.value = '';
+  };
+  window.clearAllData = () => window.askConfirm('Очистить?', 'Все записи удалятся.', 'Да', () => { window.transactions = []; window.save(); window.render(); });
+  window.showAIReport = function() {
+    if (!window.transactions.length) { window.toast('Нет данных'); return; }
+    const inc = window.transactions.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
+    const exp = window.transactions.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
+    let r = `Выступи в роли профессионального финансового советника. Проанализируй мои финансы.\n\nЗадачи:\n1. Оцени ситуацию.\n2. Найди проблемные категории.\n3. Предложи 3 шага для оптимизации.\n\n--- ДАННЫЕ ---\nДоходы: ${fmt(inc)} ₽\nРасходы: ${fmt(exp)} ₽\nБаланс: ${fmt(inc-exp)} ₽\n\nРАСХОДЫ:\n`;
+    const g = {}; window.transactions.filter(t => t.type === 'expense').forEach(t => { const n = window.categories[t.category]?.name || 'Другое'; g[n] = (g[n] || 0) + t.amount; });
+    Object.entries(g).sort((a,b)=>b[1]-a[1]).forEach(([n, a]) => r += `- ${n}: ${fmt(a)} ₽\n`);
+    r += `\nЦЕЛИ:\n`;
+    window.goals.forEach(gl => { const s = window.transactions.filter(t => t.goalId === gl.id).reduce((x, t) => x + t.amount, 0); r += `- ${gl.name}: ${fmt(s)} / ${fmt(gl.target)} ₽\n`; });
+    $('aiReportTextarea').value = r; window.showModal('aiReportModal');
+  };
+  window.copyAIReport = () => { $('aiReportTextarea').select(); document.execCommand('copy'); window.toast('Скопировано!'); };
+
+  /* ================= PWA ================= */
+  let deferredPrompt = null;
+  let newWorker = null;
+  let swRegistration = null;
+  let refreshing = false;
+
+  const isStandalone = () => window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+  const isIOS = () => /iPad|iPhone|iPod/.test(navigator.userAgent);
+
+  function showInstallButton() { const btn = $('installAppBtn'); if (btn && !isStandalone()) btn.style.display = 'block'; }
+  function hideInstallButton() { const btn = $('installAppBtn'); if (btn) btn.style.display = 'none'; }
+
+  window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferredPrompt = e; showInstallButton(); });
+  window.addEventListener('appinstalled', () => { hideInstallButton(); window.toast('Приложение установлено!'); });
+
+  window.installPWA = async function () {
+    if (isStandalone()) return;
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      deferredPrompt = null;
+      if (outcome === 'accepted') hideInstallButton();
+      return;
+    }
+    if (isIOS()) window.toast('Нажмите ⬆️ (Поделиться) → «На экран Домой»');
+    else window.toast('Меню браузера (⋮) → «Установить приложение»');
+  };
+
+  async function initServiceWorker() {
+    if (!('serviceWorker' in navigator)) return;
+    if (location.protocol === 'file:') { showInstallButton(); return; }
+    try {
+      swRegistration = await navigator.serviceWorker.register('./sw.js');
+      swRegistration.update().catch(() => {});
+      if (swRegistration.waiting && navigator.serviceWorker.controller) {
+        newWorker = swRegistration.waiting;
+        $('updateBanner').classList.add('show');
+      }
+      swRegistration.addEventListener('updatefound', () => {
+        const installing = swRegistration.installing;
+        if (!installing) return;
+        installing.addEventListener('statechange', () => {
+          if (installing.state === 'installed' && navigator.serviceWorker.controller) {
+            newWorker = installing;
+            $('updateBanner').classList.add('show');
+          }
+        });
+      });
+    } catch (e) { console.warn('[SW] failed:', e); showInstallButton(); }
+  }
+
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (!refreshing) { refreshing = true; window.location.reload(); }
+    });
+  }
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible' && swRegistration) swRegistration.update().catch(() => {});
+  });
+
+  window.applyUpdate = function () {
+    if (newWorker) newWorker.postMessage({ type: 'SKIP_WAITING' });
+    else if (swRegistration) swRegistration.update();
+  };
+
+  window.forceRefresh = function () {
+    window.askConfirm('Очистить кэш и обновиться?', 'Приложение скачает свежие файлы с сервера. Ваши записи НЕ пострадают.', 'Очистить и обновить', async () => {
+      try {
+        if ('caches' in window) { const keys = await caches.keys(); await Promise.all(keys.map(k => caches.delete(k))); }
+        if ('serviceWorker' in navigator) { const regs = await navigator.serviceWorker.getRegistrations(); await Promise.all(regs.map(r => r.unregister())); }
+      } catch (e) { console.warn(e); }
+      window.location.reload();
+    });
+  };
+
+  initServiceWorker();
+  if (!isStandalone()) showInstallButton();
+
+  if ('Notification' in window && Notification.permission === 'default') setTimeout(() => Notification.requestPermission(), 5000);
+
+  document.querySelectorAll('.modal-bg').forEach(bg => bg.addEventListener('click', e => { if (e.target === bg) window.closeModal(bg.id); }));
+  $('confirmOk').addEventListener('click', () => { const a = window.confirmAction; window.confirmAction = null; window.closeModal('confirmModal'); if (a) a(); });
+  $('title').addEventListener('keydown', e => { if (e.key === 'Enter') window.addTransaction(); });
+
+  function initDraggableModals() {
+    document.querySelectorAll('.modal').forEach(modal => {
+      const handle = modal.querySelector('.modal-handle'); if (!handle) return;
+      let startY = 0, currentY = 0, isDragging = false;
+      handle.addEventListener('touchstart', e => { startY = e.touches[0].clientY; isDragging = true; modal.style.transition = 'none'; }, { passive: true });
+      handle.addEventListener('touchmove', e => { if (!isDragging) return; const diff = e.touches[0].clientY - startY; if (diff > 0) { if (e.cancelable) e.preventDefault(); currentY = diff; modal.style.transform = `translateY(${diff}px)`; } }, { passive: false });
+      handle.addEventListener('touchend', () => {
+        if (!isDragging) return;
+        isDragging = false;
+        modal.style.transition = '';
+        if (currentY > 80) {
+          modal.style.transform = '';
+          window.closeModal(modal.closest('.modal-bg').id);
+        } else modal.style.transform = '';
+        currentY = 0;
+      });
+    });
+  }
+
+  initTheme();
+  $('heroDate').textContent = new Date().toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' });
+  window.setType('expense');
+  window.processFixedExpenses();
+  window.render();
+  initDraggableModals();
+
+});
+</script>
 </body>
 </html>
